@@ -4,6 +4,13 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
+    <PackageId>ArwynFr.IntegrationTesting</PackageId>
+    <Authors>ArwynFr</Authors>
+    <Description>This library provides utility classes for writing integration tests in dotnet using XUnit and WebApplicationFactory.</Description>
+    <Copyright>Copyright (c) ArwynFr 2024</Copyright>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +22,10 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="XUnit" Version="2.6.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="./docs/README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>
