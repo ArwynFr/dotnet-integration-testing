@@ -2,8 +2,8 @@
 
 This library provides utility classes for writing integration tests in dotnet using `XUnit` and `WebApplicationFactory`.
 
-image:https://img.shields.io/nuget/v/ArwynFr.IntegrationTesting?style=for-the-badge[PowerShell Gallery]
-image:https://img.shields.io/nuget/dt/ArwynFr.IntegrationTesting?style=for-the-badge[PowerShell Gallery] 
+image:https://img.shields.io/nuget/v/ArwynFr.IntegrationTesting?style=for-the-badge[Nuget.org,link=https://www.nuget.org/packages/ArwynFr.IntegrationTesting]
+image:https://img.shields.io/nuget/dt/ArwynFr.IntegrationTesting?style=for-the-badge[Nuget.org,link=https://www.nuget.org/packages/ArwynFr.IntegrationTesting]
 
 == Rules
 
