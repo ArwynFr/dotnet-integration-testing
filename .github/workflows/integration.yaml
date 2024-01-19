@@ -23,4 +23,4 @@ jobs:
         run: dotnet outdated --fail-on-updates
 
       - name: Run automated tests
-        run: dotnet test ArwynFr.IntegrationTesting.Tests --settings .\runsettings.xml --results-directory TestResults
+        run: dotnet test ArwynFr.IntegrationTesting.Tests --settings runsettings.xml --results-directory TestResults
