@@ -5,6 +5,10 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArwynFr.IntegrationTesting", "ArwynFr.IntegrationTesting\ArwynFr.IntegrationTesting.csproj", "{C9275A34-F1C9-4B74-8AC0-CA397DD43B00}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArwynFr.IntegrationTesting.Tests", "ArwynFr.IntegrationTesting.Tests\ArwynFr.IntegrationTesting.Tests.csproj", "{680ECFFB-9C44-4032-94F2-952D4C931488}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArwynFr.IntegrationTesting.Tests.Target", "ArwynFr.IntegrationTesting.Tests.Target\ArwynFr.IntegrationTesting.Tests.Target.csproj", "{1ABA3A21-928C-44E2-8E72-3F004BBB1FDD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{C9275A34-F1C9-4B74-8AC0-CA397DD43B00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9275A34-F1C9-4B74-8AC0-CA397DD43B00}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9275A34-F1C9-4B74-8AC0-CA397DD43B00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{680ECFFB-9C44-4032-94F2-952D4C931488}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{680ECFFB-9C44-4032-94F2-952D4C931488}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{680ECFFB-9C44-4032-94F2-952D4C931488}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{680ECFFB-9C44-4032-94F2-952D4C931488}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ABA3A21-928C-44E2-8E72-3F004BBB1FDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ABA3A21-928C-44E2-8E72-3F004BBB1FDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ABA3A21-928C-44E2-8E72-3F004BBB1FDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ABA3A21-928C-44E2-8E72-3F004BBB1FDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
