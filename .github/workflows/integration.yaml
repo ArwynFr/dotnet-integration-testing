@@ -8,12 +8,14 @@ on:
     branches: [main]
 
 jobs:
-  deployment:
+  integration:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: src
     steps:
+      - uses: actions/checkout@v4
+
       - name: Restore dotnet tools
         run: dotnet tool restore
 
