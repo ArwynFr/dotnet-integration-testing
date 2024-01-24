@@ -1,0 +1,10 @@
+This project welcomes contributions:
+
+[horizontal]
+Request for support:: TBD
+Report malfunctions:: Please https://github.com/ArwynFr/dotnet-integration-testing/issues/new/choose[create a new issue on GitHub]
+Suggest a feature:: Please https://github.com/ArwynFr/dotnet-integration-testing/issues/new/choose[create a new issue on GitHub]
+Offer some code:: Please https://github.com/ArwynFr/dotnet-integration-testing/fork[fork the repository] and https://github.com/ArwynFr/dotnet-integration-testing/compare[submit a pull-request] +
+Read our definition of done in https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/CONTRIBUTING.adoc[contributing guidelines]
+Disclose vulnerability::
+Please https://github.com/ArwynFr/dotnet-integration-testing/security/advisories[create a new security advisory on GitHub]

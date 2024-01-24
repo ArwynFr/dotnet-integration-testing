@@ -1,0 +1,7 @@
+= Contributing guidelines
+
+include::CONTRIBUTING-table.adoc[]
+
+== Definition of Done
+
+include::CONTRIBUTING-dod.adoc[]
