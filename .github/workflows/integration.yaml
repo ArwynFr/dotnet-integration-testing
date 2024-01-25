@@ -11,6 +11,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions: read-all
+
 jobs:
   integration:
     runs-on: ubuntu-latest
@@ -22,7 +24,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run megalinter
-        uses: oxsecurity/megalinter@v7
+        uses: oxsecurity/megalinter:v7.8.0@sha256:b52dea560364564a896b0dc7e5099805190128e1a1236970c9d415121c03a195
         env:
           DISABLE_LINTERS: SPELL_CSPELL
           EDITORCONFIG_EDITORCONFIG_CHECKER_ARGUMENTS: -disable-end-of-line
