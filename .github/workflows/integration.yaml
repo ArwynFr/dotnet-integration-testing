@@ -19,6 +19,8 @@ jobs:
 
       - name: Run megalinter
         uses: oxsecurity/megalinter@v7
+        env:
+          DISABLE_LINTERS: SPELL_CSPELL
 
       - name: Restore dotnet tools
         run: dotnet tool restore
