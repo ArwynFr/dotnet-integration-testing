@@ -11,16 +11,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions: read-all
-
 jobs:
   integration:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: src
-    permissions:
-      contents: write
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
