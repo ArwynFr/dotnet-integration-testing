@@ -19,6 +19,6 @@ public class LoggingTests(ITestOutputHelper output) : IntegrationTestBase<Progra
     {
         await Client.GetAsync("/");
         output.Should().BeOfType<TestOutputHelper>()
-           .Subject.Output.Should().NotBeNullOrEmpty();
+            .Subject.Output.Should().NotBeNullOrEmpty();
     }
 }

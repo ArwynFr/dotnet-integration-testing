@@ -25,6 +25,7 @@ jobs:
         uses: oxsecurity/megalinter@v7
         env:
           DISABLE_LINTERS: SPELL_CSPELL
+          EDITORCONFIG_EDITORCONFIG_CHECKER_ARGUMENTS: -disable-end-of-line
 
       - name: Restore dotnet tools
         run: dotnet tool restore
