@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run megalinter
-        uses: oxsecurity/megalinter:v7.8.0@sha256:688bc7466d7ab4faa83d614c2e6f9acf42b674dc
+        uses: oxsecurity/megalinter@688bc7466d7ab4faa83d614c2e6f9acf42b674dc # v7.8.0
         env:
           DISABLE_LINTERS: SPELL_CSPELL
           EDITORCONFIG_EDITORCONFIG_CHECKER_ARGUMENTS: -disable-end-of-line
