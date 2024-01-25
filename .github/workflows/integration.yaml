@@ -14,13 +14,32 @@ jobs:
       run:
         working-directory: src
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Run megalinter
+        uses: oxsecurity/megalinter@v7
 
       - name: Restore dotnet tools
         run: dotnet tool restore
 
       - name: Test for outdated dependencies
         run: dotnet outdated --fail-on-updates
+        working-directory: src
+
+      - name: SonarCloud configuration
+        run: dotnet sonarscanner begin /o:arwynfr /k:ArwynFr_dotnet-integration-testing /d:sonar.host.url=https://sonarcloud.io
+        env:
+          SONAR_TOKEN: ${{ secrets.sonar_token }}
 
       - name: Run automated tests
-        run: dotnet test ArwynFr.IntegrationTesting.Tests --settings runsettings.xml --results-directory TestResults
+        run: dotnet test --settings runsettings.xml --results-directory TestResults
+        working-directory: src/ArwynFr.IntegrationTesting.Tests
+
+      - name: SonarCloud analyze
+        run: dotnet sonarscanner end
+
+      - name: Continuous integration
+        run: gh pr merge --squash --auto
+        env:
+          GH_TOKEN: ${{ github.token }}
