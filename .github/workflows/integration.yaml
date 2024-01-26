@@ -21,23 +21,23 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v4
 
-      - name: Run megalinter
-        uses: oxsecurity/megalinter@688bc7466d7ab4faa83d614c2e6f9acf42b674dc # v7.8.0
-        env:
-          DISABLE_LINTERS: SPELL_CSPELL,REPOSITORY_CHECKOV
-          EDITORCONFIG_EDITORCONFIG_CHECKER_ARGUMENTS: -disable-end-of-line
-
-      - name: Dotnet informations
-        run: dotnet --info
-
       - name: Restore dotnet tools
         run: dotnet tool restore
 
-      - name: dotnet build
-        run: dotnet build
+      - name: Check dotnet-format
+        run: dotnet format --verify-no-changes
 
-      - name: Test for outdated dependencies
+      - name: Check roslynator
+        run: dotnet roslynator analyze
+
+      - name: Check outdated nuget packages
         run: dotnet outdated --fail-on-updates
+
+      - name: check mardown
+        uses: nosborn/github-action-markdown-cli@v3.3.0
+        with:
+          files: .
+          dot: true
 
       - name: SonarCloud configuration
         run: dotnet sonarscanner begin /o:arwynfr /k:ArwynFr_dotnet-integration-testing /d:sonar.host.url=https://sonarcloud.io
