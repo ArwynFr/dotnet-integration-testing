@@ -88,5 +88,6 @@ Please [create a new security advisory on GitHub](https://github.com/ArwynFr/dot
 [Please create a new issue on GitHub](https://github.com/ArwynFr/dotnet-integration-testing/issues/new/choose)
 
 **Offer some code:**  
-Please [fork the repository](https://github.com/ArwynFr/dotnet-integration-testing/fork) and [submit a pull-request](https://github.com/ArwynFr/dotnet-integration-testing/compare) \
+Please [fork the repository](https://github.com/ArwynFr/dotnet-integration-testing/fork)
+and [submit a pull-request](https://github.com/ArwynFr/dotnet-integration-testing/compare) \
 [Read our definition of done in contributing guidelines](https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/CONTRIBUTING.md)

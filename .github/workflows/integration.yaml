@@ -33,7 +33,7 @@ jobs:
       - name: Check outdated nuget packages
         run: dotnet outdated --fail-on-updates
 
-      - name: check mardown
+      - name: Check markdown
         uses: nosborn/github-action-markdown-cli@v3.3.0
         with:
           files: .

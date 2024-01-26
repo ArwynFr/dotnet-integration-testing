@@ -40,15 +40,10 @@ Change the sources for the app configuration. By default, overrides the
 application configuration sources with the following (lower overrides
 higher):
 
--   `appsettings.json` file
-
--   User secrets associated with the assembly that contains the
-    entrypoint
-
--   User secrets associated with the assembly that contains the test
-    class
-
--   Environment variables
+- `appsettings.json` file
+- User secrets associated with the assembly that contains the entrypoint
+- User secrets associated with the assembly that contains the test class
+- Environment variables
 
 ConfigureAppLogging  
 Change the app logging configuration. By default, redirects all logs

@@ -15,20 +15,16 @@ Please [create a new security advisory on GitHub](https://github.com/ArwynFr/dot
 [Please create a new issue on GitHub](https://github.com/ArwynFr/dotnet-integration-testing/issues/new/choose)
 
 **Offer some code:**  
-Please [fork the repository](https://github.com/ArwynFr/dotnet-integration-testing/fork) and [submit a pull-request](https://github.com/ArwynFr/dotnet-integration-testing/compare)
+Please [fork the repository](https://github.com/ArwynFr/dotnet-integration-testing/fork)
+and [submit a pull-request](https://github.com/ArwynFr/dotnet-integration-testing/compare)
 
 ## Definition of Done
 
 Merging a pull request requires:
 
--   dotnet format passes
-
--   dotnet roslynator analyze passes
-
--   dotnet oudated passes
-
--   markdownlint passes
-
--   SonarCloud QualityGate passes
-
--   Documentation updated
+- dotnet format passes
+- dotnet roslynator analyze passes
+- dotnet oudated passes
+- markdownlint passes
+- SonarCloud QualityGate passes
+- Documentation updated
