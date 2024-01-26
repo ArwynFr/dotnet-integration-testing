@@ -14,20 +14,17 @@ concurrency:
 jobs:
   sonarqube:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: src/ArwynFr.IntegrationTesting.Tests
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
       - name: Restore dotnet tools
         run: dotnet tool restore
       - name: SonarCloud configuration
-        run: dotnet sonarscanner begin /o:arwynfr /k:ArwynFr_dotnet-integration-testing /d:sonar.host.url=https://sonarcloud.io
+        run: dotnet sonarscanner begin /o:arwynfr
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
       - name: Run automated tests
-        run: dotnet test --settings runsettings.xml --results-directory TestResults
+        run: dotnet test src/ArwynFr.IntegrationTesting.Tests --settings runsettings.xml --results-directory TestResults
       - name: SonarCloud analyze
         run: dotnet sonarscanner end
 
