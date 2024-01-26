@@ -20,7 +20,12 @@ jobs:
       - name: Restore dotnet tools
         run: dotnet tool restore
       - name: SonarCloud configuration
-        run: dotnet sonarscanner begin /o:arwynfr
+        run: >
+          dotnet sonarscanner begin
+          /o:arwynfr
+          /key:ArwynFr_dotnet-integration-testing
+          /d:sonar.host.url=https://sonarcloud.io
+          /d:sonar.java.binaries=${env.JAVA_HOME_21_X64}
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
       - name: Run automated tests
