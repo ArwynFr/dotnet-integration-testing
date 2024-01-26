@@ -7,20 +7,80 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  integration:
+  sonarqube:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Use Java 21 Temuerin
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+      - name: Restore dotnet tools
+        run: dotnet tool restore
+      - name: SonarCloud configuration
+        run: >
+          dotnet sonarscanner begin
+          /o:arwynfr
+          /key:ArwynFr_dotnet-integration-testing
+          /d:sonar.host.url=https://sonarcloud.io
+          /d:sonar.cs.opencover.reportsPaths=TestResults/*/coverage.opencover.xml
+          /d:sonar.verbose=true
+        env:
+          SONAR_TOKEN: ${{ secrets.sonar_token }}
+      - name: Run automated tests
+        run: dotnet test src/ArwynFr.IntegrationTesting.Tests --settings runsettings.xml --results-directory TestResults
+      - name: SonarCloud analyze
+        run: dotnet sonarscanner end
+        env:
+          SONAR_TOKEN: ${{ secrets.sonar_token }}
+
+  code-lint:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: src
     steps:
-      - uses: actions/checkout@v4
-
+      - name: Checkout sources
+        uses: actions/checkout@v4
       - name: Restore dotnet tools
         run: dotnet tool restore
+      - name: Check dotnet-format
+        run: dotnet format --verify-no-changes
+      - name: Check roslynator
+        run: dotnet roslynator analyze
 
-      - name: Test for outdated dependencies
+  docs-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Check markdown
+        uses: nosborn/github-action-markdown-cli@v3.3.0
+        with:
+          files: .
+          dot: true
+
+  not-outdated:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Restore dotnet tools
+        run: dotnet tool restore
+      - name: Check outdated nuget packages
         run: dotnet outdated --fail-on-updates
 
-      - name: Run automated tests
-        run: dotnet test ArwynFr.IntegrationTesting.Tests --settings runsettings.xml --results-directory TestResults
+      # - name: Continuous integration
+      #   run: gh pr merge --squash --auto
+      #   env:
+      #     GH_TOKEN: ${{ github.token }}
