@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: src
+        working-directory: src/ArwynFr.IntegrationTesting.Tests
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -27,7 +27,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
       - name: Run automated tests
-        run: dotnet test ArwynFr.IntegrationTesting.Tests --settings runsettings.xml --results-directory TestResults
+        run: dotnet test --settings runsettings.xml --results-directory TestResults
       - name: SonarCloud analyze
         run: dotnet sonarscanner end
 
