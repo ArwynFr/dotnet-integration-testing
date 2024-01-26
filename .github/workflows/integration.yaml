@@ -21,11 +21,11 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v4
 
-      # - name: Run megalinter
-      #   uses: oxsecurity/megalinter@688bc7466d7ab4faa83d614c2e6f9acf42b674dc # v7.8.0
-      #   env:
-      #     DISABLE_LINTERS: SPELL_CSPELL,REPOSITORY_CHECKOV
-      #     EDITORCONFIG_EDITORCONFIG_CHECKER_ARGUMENTS: -disable-end-of-line
+      - name: Run megalinter
+        uses: oxsecurity/megalinter@688bc7466d7ab4faa83d614c2e6f9acf42b674dc # v7.8.0
+        env:
+          DISABLE_LINTERS: SPELL_CSPELL,REPOSITORY_CHECKOV
+          EDITORCONFIG_EDITORCONFIG_CHECKER_ARGUMENTS: -disable-end-of-line
 
       - name: Dotnet informations
         run: dotnet --info
