@@ -14,6 +14,9 @@ concurrency:
 jobs:
   sonarqube:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -24,12 +27,15 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
       - name: Run automated tests
-        run: dotnet test src/ArwynFr.IntegrationTesting.Tests --settings runsettings.xml --results-directory TestResults
+        run: dotnet test ArwynFr.IntegrationTesting.Tests --settings runsettings.xml --results-directory TestResults
       - name: SonarCloud analyze
         run: dotnet sonarscanner end
 
   code-lint:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
