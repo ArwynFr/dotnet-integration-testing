@@ -7,7 +7,7 @@ on:
 
 jobs:
   deployment:
-    uses: ArwynFr/ArwynFr/.github/workflows/deployment/nuget.yaml@main
+    uses: ArwynFr/ArwynFr/.github/workflows/deployment-nuget.yaml@main
     with:
       target: ./src
     secrets:
