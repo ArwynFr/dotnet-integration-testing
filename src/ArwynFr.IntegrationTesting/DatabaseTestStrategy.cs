@@ -38,7 +38,8 @@ where TContext : DbContext
         transaction = true;
         return this;
     }
-    private Task UpdateDatabase(TContext context)
+
+    private static Task UpdateDatabase(TContext context)
         => context.Database.GetMigrations().Any()
         ? context.Database.MigrateAsync()
         : context.Database.EnsureCreatedAsync();
