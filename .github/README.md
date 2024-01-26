@@ -3,10 +3,10 @@
 This library provides utility classes for writing integration tests in
 dotnet using `XUnit` and `WebApplicationFactory`.
 
-![Nuget.org](https://img.shields.io/nuget/v/ArwynFr.IntegrationTesting?style=for-the-badge)
-![Nuget.org](https://img.shields.io/nuget/dt/ArwynFr.IntegrationTesting?style=for-the-badge)
-![GitHub
-License](https://img.shields.io/github/license/ArwynFr/dotnet-integration-testing?style=for-the-badge)
+[![Nuget.org](https://img.shields.io/nuget/v/ArwynFr.IntegrationTesting?style=for-the-badge)](https://www.nuget.org/packages/ArwynFr.IntegrationTesting/)
+[![Nuget.org](https://img.shields.io/nuget/dt/ArwynFr.IntegrationTesting?style=for-the-badge)](https://www.nuget.org/packages/ArwynFr.IntegrationTesting/)
+[![GitHub
+License](https://img.shields.io/github/license/ArwynFr/dotnet-integration-testing?style=for-the-badge)](https://github.com/ArwynFr/dotnet-integration-testing#MIT-1-ov-file)
 
 ## Installation
 
@@ -15,7 +15,7 @@ License](https://img.shields.io/github/license/ArwynFr/dotnet-integration-testin
 ## Usage
 
 Read [advanced usage
-documentation](https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/USAGE.adoc)
+documentation](https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/USAGE.md)
 for further details.
 
 By default, the lib redirects the tested application logs to XUnit
