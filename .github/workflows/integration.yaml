@@ -21,6 +21,9 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v4
 
+      - name: Restore dotnet tools
+        run: dotnet tool restore
+
       - name: SonarCloud configuration
         run: dotnet sonarscanner begin /o:arwynfr /k:ArwynFr_dotnet-integration-testing /d:sonar.host.url=https://sonarcloud.io
         env:
@@ -32,9 +35,6 @@ jobs:
 
       - name: SonarCloud analyze
         run: dotnet sonarscanner end
-
-      - name: Restore dotnet tools
-        run: dotnet tool restore
 
       - name: Check dotnet-format
         run: dotnet format --verify-no-changes
