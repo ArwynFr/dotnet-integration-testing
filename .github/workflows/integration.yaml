@@ -35,10 +35,9 @@ jobs:
       - name: Run automated tests
         run: dotnet test src/ArwynFr.IntegrationTesting.Tests --settings runsettings.xml --results-directory TestResults
       - name: SonarCloud analyze
-        run: >
-          dotnet sonarscanner end
-          /o:arwynfr
-          /key:ArwynFr_dotnet-integration-testing
+        run: dotnet sonarscanner end
+        env:
+          SONAR_TOKEN: ${{ secrets.sonar_token }}
 
   code-lint:
     runs-on: ubuntu-latest
