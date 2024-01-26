@@ -25,9 +25,9 @@ jobs:
           /o:arwynfr
           /key:ArwynFr_dotnet-integration-testing
           /d:sonar.host.url=https://sonarcloud.io
-          /d:sonar.java.binaries=${JAVA_HOME_21_X64}
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
+          JAVA_HOME: ${{ env.JAVA_HOME_21_X64 }}
       - name: Run automated tests
         run: dotnet test src/ArwynFr.IntegrationTesting.Tests --settings runsettings.xml --results-directory TestResults
       - name: SonarCloud analyze
