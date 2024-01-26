@@ -31,6 +31,7 @@ jobs:
           /key:ArwynFr_dotnet-integration-testing
           /d:sonar.host.url=https://sonarcloud.io
           /d:sonar.cs.opencover.reportsPaths=TestResults/*/coverage.opencover.xml
+          /d:sonar.verbose=true
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
       - name: Run automated tests
