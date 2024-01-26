@@ -13,9 +13,7 @@ where TContext : DbContext
 {
     protected IntegrationTestBase(ITestOutputHelper output) : base(output) => Expression.Empty();
 
-    protected TContext Database => new ServiceCollection()
-        .AddDbContext<TContext>(ConfigureDbContext, ServiceLifetime.Singleton)
-        .BuildServiceProvider().GetRequiredService<TContext>();
+    protected TContext Database => Services.GetRequiredService<TContext>();
 
     protected virtual IDatabaseTestStrategy<TContext> DatabaseTestStrategy => IDatabaseTestStrategy<TContext>.Default;
 
@@ -23,7 +21,9 @@ where TContext : DbContext
 
     public override Task InitializeAsync() => DatabaseTestStrategy.InitializeAsync(Database);
 
-    protected override void ConfigureAppServices(IServiceCollection services) => services.AddSingleton(Database);
+    protected override void ConfigureAppServices(IServiceCollection services) => services.AddSingleton(new ServiceCollection()
+        .AddDbContext<TContext>(ConfigureDbContext, ServiceLifetime.Singleton)
+        .BuildServiceProvider().GetRequiredService<TContext>());
 
     protected abstract void ConfigureDbContext(DbContextOptionsBuilder builder);
 

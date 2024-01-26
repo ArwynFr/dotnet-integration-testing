@@ -9,7 +9,7 @@ using Xunit.Abstractions;
 
 namespace ArwynFr.IntegrationTesting.Tests.EntityFrameworkCore;
 
-public class DatabasePerTestStrategyTests(ITestOutputHelper output) : IntegrationTestBase<Program, DummyDbContext>(output)
+public class DatabaseDefaultStrategyTests(ITestOutputHelper output) : IntegrationTestBase<Program, DummyDbContext>(output)
 {
     [Fact]
     public void TestShouldCreateDatabase()
@@ -17,8 +17,14 @@ public class DatabasePerTestStrategyTests(ITestOutputHelper output) : Integratio
         Database.Database.GetDbConnection().Should().NotBeNull();
     }
 
+    public override async Task InitializeAsync()
+    {
+        await Database.Database.EnsureCreatedAsync();
+        await base.InitializeAsync();
+    }
+
     protected override IDatabaseTestStrategy<DummyDbContext> DatabaseTestStrategy
-        => IDatabaseTestStrategy<DummyDbContext>.DatabasePerTest;
+        => IDatabaseTestStrategy<DummyDbContext>.Default;
 
     protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
         => builder.UseSqlite($@"Data Source={Guid.NewGuid()}.sqlite");

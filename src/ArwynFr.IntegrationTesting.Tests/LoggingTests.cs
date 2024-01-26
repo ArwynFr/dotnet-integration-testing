@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using ArwynFr.IntegrationTesting.Tests.Target;
+
+using FluentAssertions;
 
 using Xunit;
 using Xunit.Abstractions;
@@ -20,5 +22,14 @@ public class LoggingTests(ITestOutputHelper output) : IntegrationTestBase<Progra
         await Client.GetAsync("/");
         output.Should().BeOfType<TestOutputHelper>()
             .Subject.Output.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public async Task ExceptionThrown_ShouldWriteToXunit()
+    {
+        var response = await Client.GetAsync("/error");
+        response.Should().HaveServerError();
+        output.Should().BeOfType<TestOutputHelper>()
+            .Subject.Output.Should().Contain(nameof(DummyException));
     }
 }
