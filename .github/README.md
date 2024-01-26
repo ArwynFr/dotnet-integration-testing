@@ -1,3 +1,5 @@
+# ArwynFr.IntegrationTesting
+
 This library provides utility classes for writing integration tests in
 dotnet using `XUnit` and `WebApplicationFactory`.
 
@@ -6,11 +8,11 @@ dotnet using `XUnit` and `WebApplicationFactory`.
 ![GitHub
 License](https://img.shields.io/github/license/ArwynFr/dotnet-integration-testing?style=for-the-badge)
 
-# Installation
+## Installation
 
     dotnet add package ArwynFr.IntegrationTesting
 
-# Usage
+## Usage
 
 Read [advanced usage
 documentation](https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/USAGE.adoc)
@@ -39,7 +41,7 @@ and environement variables.
             => services.AddSingleton<IMyService, FakeService>();
     }
 
-## EntityFrameworkCore integration
+### EntityFrameworkCore integration
 
     public class TestBaseDb : IntegrationTestBase<Program, MyDbContext>
     {
@@ -69,48 +71,22 @@ and environement variables.
             => builder.UseSqlite($"Data Source={Guid.NewGuid()}.sqlite");
     }
 
-# Contributing
+## Contributing
 
 This project welcomes contributions:
 
-<table>
-<colgroup>
-<col style="width: 15%" />
-<col style="width: 85%" />
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><p>Request for support</p></td>
-<td><p>TBD</p></td>
-</tr>
-<tr class="even">
-<td><p>Report malfunctions</p></td>
-<td><p>Please <a
-href="https://github.com/ArwynFr/dotnet-integration-testing/issues/new/choose">create
-a new issue on GitHub</a></p></td>
-</tr>
-<tr class="odd">
-<td><p>Suggest a feature</p></td>
-<td><p>Please <a
-href="https://github.com/ArwynFr/dotnet-integration-testing/issues/new/choose">create
-a new issue on GitHub</a></p></td>
-</tr>
-<tr class="even">
-<td><p>Offer some code</p></td>
-<td><p>Please <a
-href="https://github.com/ArwynFr/dotnet-integration-testing/fork">fork
-the repository</a> and <a
-href="https://github.com/ArwynFr/dotnet-integration-testing/compare">submit
-a pull-request</a><br />
-Read our definition of done in <a
-href="https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/CONTRIBUTING.adoc">contributing
-guidelines</a></p></td>
-</tr>
-<tr class="odd">
-<td><p>Disclose vulnerability</p></td>
-<td><p>Please <a
-href="https://github.com/ArwynFr/dotnet-integration-testing/security/advisories">create
-a new security advisory on GitHub</a></p></td>
-</tr>
-</tbody>
-</table>
+**Request for support:**  
+TBD
+
+**Disclose vulnerability:**  
+Please [create a new security advisory on GitHub](https://github.com/ArwynFr/dotnet-integration-testing/security/advisories)
+
+**Report malfunctions:**  
+[Please create a new issue on GitHub](https://github.com/ArwynFr/dotnet-integration-testing/issues/new/choose)
+
+**Suggest a feature:**  
+[Please create a new issue on GitHub](https://github.com/ArwynFr/dotnet-integration-testing/issues/new/choose)
+
+**Offer some code:**  
+Please [fork the repository](https://github.com/ArwynFr/dotnet-integration-testing/fork) and [submit a pull-request](https://github.com/ArwynFr/dotnet-integration-testing/compare) \
+[Read our definition of done in contributing guidelines](https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/CONTRIBUTING.md)

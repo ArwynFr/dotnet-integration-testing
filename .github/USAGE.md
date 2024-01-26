@@ -1,24 +1,26 @@
+# Advanced usage documentation
+
 This library uses `WebApplicationFactory` for integration testing.
 Please read [Microsoft’s paper on integration
 testing](https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-8.0)
 for details on how this library works.
 
-# Definitions
+## Definitions
 
-Tested application  
+**Tested application**  
 A dotnet application that you want to test. Also known as the *system
 under test* (SUT).
 
-Entrypoint  
+**Entrypoint**  
 A specific class of the tested application that is run when the
 application start. For top-level statement applications this is the
 `Program` class.
 
-Test project  
+**Test project**  
 A XUnit test project that implements tests and ensures that the tested
 application behaves as expected.
 
-# Basic integration test
+## Basic integration test
 
 Simply extend the `IntegrationTestBase<TEntryPoint>` class and provide
 the entrypoint class you want to test:
