@@ -118,7 +118,7 @@ Code executed before the execution of each test of the class.
 DisposeAsync  
 Code executed after the execution of each test of the class.
 
-# EntityFrameworkCore integration
+## EntityFrameworkCore integration
 
 The library provides specific support for efcore. You can achieve this
 integration by extending the
