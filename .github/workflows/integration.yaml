@@ -79,8 +79,3 @@ jobs:
         run: dotnet tool restore
       - name: Check outdated nuget packages
         run: dotnet outdated --fail-on-updates
-
-      # - name: Continuous integration
-      #   run: gh pr merge --squash --auto
-      #   env:
-      #     GH_TOKEN: ${{ github.token }}

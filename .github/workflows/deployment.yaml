@@ -1,0 +1,14 @@
+name: continuous deployment
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  deployment:
+    uses: ArwynFr/ArwynFr/.github/workflows/deployment/nuget.yaml@main
+    with:
+      target: ./src
+    secrets:
+      NUGET_APIKEY: ${{ secrets.NUGET_APIKEY }}

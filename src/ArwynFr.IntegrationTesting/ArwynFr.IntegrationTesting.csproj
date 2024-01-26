@@ -12,6 +12,9 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <SonarQubeTestProject>false</SonarQubeTestProject>
+    <RepositoryUrl>https://github.com/ArwynFr/dotnet-integration-testing</RepositoryUrl>
+    <PackageTags>xunit;integration-testing;WebApplicationFactory</PackageTags>
+    <PackageIcon>logo.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,6 +28,7 @@
 
   <ItemGroup>
     <None Include="../../.github/README.md" Pack="true" PackagePath="/" />
+    <None Include="../logo.png" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>
