@@ -21,24 +21,6 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v4
 
-      - name: Restore dotnet tools
-        run: dotnet tool restore
-
-      - name: Check dotnet-format
-        run: dotnet format --verify-no-changes
-
-      - name: Check roslynator
-        run: dotnet roslynator analyze
-
-      - name: Check outdated nuget packages
-        run: dotnet outdated --fail-on-updates
-
-      - name: Check markdown
-        uses: nosborn/github-action-markdown-cli@v3.3.0
-        with:
-          files: .
-          dot: true
-
       - name: SonarCloud configuration
         run: dotnet sonarscanner begin /o:arwynfr /k:ArwynFr_dotnet-integration-testing /d:sonar.host.url=https://sonarcloud.io
         env:
@@ -50,6 +32,24 @@ jobs:
 
       - name: SonarCloud analyze
         run: dotnet sonarscanner end
+
+      - name: Restore dotnet tools
+        run: dotnet tool restore
+
+      - name: Check dotnet-format
+        run: dotnet format --verify-no-changes
+
+      - name: Check roslynator
+        run: dotnet roslynator analyze
+
+      - name: Check markdown
+        uses: nosborn/github-action-markdown-cli@v3.3.0
+        with:
+          files: .
+          dot: true
+
+      - name: Check outdated nuget packages
+        run: dotnet outdated --fail-on-updates
 
       - name: Continuous integration
         run: gh pr merge --squash --auto
