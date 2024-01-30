@@ -80,6 +80,8 @@ TBD
 
 **Disclose vulnerability:**  
 Please [create a new security advisory on GitHub](https://github.com/ArwynFr/dotnet-integration-testing/security/advisories)
+\
+[Read our security policy](https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/SECURITY.md)
 
 **Report malfunctions:**  
 [Please create a new issue on GitHub](https://github.com/ArwynFr/dotnet-integration-testing/issues/new/choose)
@@ -92,3 +94,8 @@ Please [fork the repository](https://github.com/ArwynFr/dotnet-integration-testi
 and [submit a pull-request](https://github.com/ArwynFr/dotnet-integration-testing/compare)
 \
 [Read our definition of done in contributing guidelines](https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/CONTRIBUTING.md)
+
+**Moderate contributions:**  
+This project is not currently appointing new moderators.
+\
+[Read our governance policy](https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/GOVERNANCE.md)

@@ -22,6 +22,7 @@ and [submit a pull-request](https://github.com/ArwynFr/dotnet-integration-testin
 
 Merging a pull request requires:
 
+- dotnet test passes
 - dotnet format passes
 - dotnet roslynator analyze passes
 - dotnet oudated passes
