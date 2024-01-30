@@ -1,6 +1,0 @@
-Merging a pull request requires:
-
-- MegaLinter passes
-- dotnet-oudated passes
-- SonarCloud QualityGate passes
-- Documentation updated
