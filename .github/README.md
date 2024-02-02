@@ -71,6 +71,64 @@ and environement variables.
             => builder.UseSqlite($"Data Source={Guid.NewGuid()}.sqlite");
     }
 
+### Fluent specification-based testing
+
+First write a driver that tells the test framework how to execute AAA operations. This class can implement multiple operations of the same kind:
+
+    public class SpecDriver(MyDbContext dbContext, HttpClient client) : TestDriverBase<SpecDriver>
+    {
+        // Used to store the API call result
+        private string? result;
+
+        // Arrange
+        public async Task ThereIsAnEntity(string name)
+        {
+            dbContext.Entities.Add(new Entity { Name = name });
+            await dbContext.SaveChangesAsync();
+        }
+
+        // Another arrange
+        public async Task ThereIsNoEntity(string name)
+        {
+            await dbContext.Entities.Where(entity => entity.Name == name).ExecuteDeleteAsync();
+        }
+
+        // Act
+        public async Task FindEntityByName(string name)
+        {
+            result = await client.GetFromJsonAsync<string>($"/api/entities/{name}");
+        }
+
+        // Assert
+        public Task ResultShouldBe(string name)
+        {
+            Assert.Equal(name, result);
+            return Task.CompletedTask;
+        }
+    }
+
+Then write an integration test that injects the driver and use it to run fluent specification-based tests:
+
+    public class SpecTest(ITestOutputHelper output) : TestBaseDb
+    {
+        // Configure DI library
+        protected override void ConfigureAppServices(IServiceCollection services)
+        {
+            base.ConfigureAppServices(services);
+            services.AddSingleton(_ => new SpecDriver(Database, Client));
+        }
+
+        [Theory, InlineData("ArwynFr")]
+        public async Task OnTest(string name)
+        {
+            await Services.GetRequiredService<SpecDriver>()
+                .Given(x => x.ThereIsEntityWithName(name))
+                .When(x => x.FindEntityWithName(name))
+                .Then(x => x.ResultShouldBe(name))
+                .ExecuteAsync();
+        }
+    }
+
 ## Contributing
 
 This project welcomes contributions:
