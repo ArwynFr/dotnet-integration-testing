@@ -23,111 +23,119 @@ output, so you get them in the test output in case of failure. It also
 overwrites the application configuration with values from user secrets
 and environement variables.
 
-    public class MyTest : IntegrationTestBase<Program>
+```cs
+public class MyTest : IntegrationTestBase<Program>
+{
+    public MyTest(ITestOutputHelper output) : base(output) { }
+
+    [Fact]
+    public async Task OnTest()
     {
-        public MyTest(ITestOutputHelper output) : base(output) { }
+        // Call system under test
+        var response = await Client.GetFromJsonAsync<OrderDto>($"/order");
 
-        [Fact]
-        public async Task OnTest()
-        {
-            // Call system under test
-            var response = await Client.GetFromJsonAsync<OrderDto>($"/order");
-
-            response.Should().HaveValue();
-        }
-
-        // Override a service with fake implementation in the tested app
-        protected override void ConfigureAppServices(IServiceCollection services)
-            => services.AddSingleton<IMyService, FakeService>();
+        response.Should().HaveValue();
     }
+
+    // Override a service with fake implementation in the tested app
+    protected override void ConfigureAppServices(IServiceCollection services)
+        => services.AddSingleton<IMyService, FakeService>();
+}
+```cs
 
 ### EntityFrameworkCore integration
 
-    public class TestBaseDb : IntegrationTestBase<Program, MyDbContext>
+```cs
+public class TestBaseDb : IntegrationTestBase<Program, MyDbContext>
+{
+    public TestBaseDb(ITestOutputHelper output) : base(output) { }
+
+    [Fact]
+    public async Task OnTest()
     {
-        public TestBaseDb(ITestOutputHelper output) : base(output) { }
+        // Access the injected dbcontext
+        var value = await Database.Values
+            .Where(val => val.Id == 1)
+            .Select(val => val.Result)
+            .FirstOrDefaultAsync();
 
-        [Fact]
-        public async Task OnTest()
-        {
-            // Access the injected dbcontext
-            var value = await Database.Values
-                .Where(val => val.Id == 1)
-                .Select(val => val.Result)
-                .FirstOrDefaultAsync();
+        // Call system under test
+        var result = await Client.GetFromJsonAsync<int>("/api/value/1");
 
-            // Call system under test
-            var result = await Client.GetFromJsonAsync<int>("/api/value/1");
-
-            result.Should().Be(value + 1);
-        }
-
-        // Create and drop a database for every test execution
-        protected override IDatabaseTestStrategy<Context> DatabaseTestStrategy
-            => IDatabaseTestStrategy<MyDbContext>.DatabasePerTest;
-
-        // Configure EFcore with a random database name
-        protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
-            => builder.UseSqlite($"Data Source={Guid.NewGuid()}.sqlite");
+        result.Should().Be(value + 1);
     }
+
+    // Create and drop a database for every test execution
+    protected override IDatabaseTestStrategy<Context> DatabaseTestStrategy
+        => IDatabaseTestStrategy<MyDbContext>.DatabasePerTest;
+
+    // Configure EFcore with a random database name
+    protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
+        => builder.UseSqlite($"Data Source={Guid.NewGuid()}.sqlite");
+}
+```cs
 
 ### Fluent specification-based testing
 
 First write a driver that tells the test framework how to execute AAA operations. This class can implement multiple operations of the same kind:
 
-    public class SpecDriver(MyDbContext dbContext, HttpClient client) : TestDriverBase<SpecDriver>
+```cs
+public class SpecDriver(MyDbContext dbContext, HttpClient client) : TestDriverBase<SpecDriver>
+{
+    // Used to store the API call result
+    private string? result;
+
+    // Arrange
+    public async Task ThereIsAnEntity(string name)
     {
-        // Used to store the API call result
-        private string? result;
-
-        // Arrange
-        public async Task ThereIsAnEntity(string name)
-        {
-            dbContext.Entities.Add(new Entity { Name = name });
-            await dbContext.SaveChangesAsync();
-        }
-
-        // Another arrange
-        public async Task ThereIsNoEntity(string name)
-        {
-            await dbContext.Entities.Where(entity => entity.Name == name).ExecuteDeleteAsync();
-        }
-
-        // Act
-        public async Task FindEntityByName(string name)
-        {
-            result = await client.GetFromJsonAsync<string>($"/api/entities/{name}");
-        }
-
-        // Assert
-        public Task ResultShouldBe(string name)
-        {
-            Assert.Equal(name, result);
-            return Task.CompletedTask;
-        }
+        dbContext.Entities.Add(new Entity { Name = name });
+        await dbContext.SaveChangesAsync();
     }
+
+    // Another arrange
+    public async Task ThereIsNoEntity(string name)
+    {
+        await dbContext.Entities.Where(entity => entity.Name == name).ExecuteDeleteAsync();
+    }
+
+    // Act
+    public async Task FindEntityByName(string name)
+    {
+        result = await client.GetFromJsonAsync<string>($"/api/entities/{name}");
+    }
+
+    // Assert
+    public Task ResultShouldBe(string name)
+    {
+        Assert.Equal(name, result);
+        return Task.CompletedTask;
+    }
+}
+```cs
 
 Then write an integration test that injects the driver and use it to run fluent specification-based tests:
 
-    public class SpecTest(ITestOutputHelper output) : TestBaseDb
+```cs
+public class SpecTest(ITestOutputHelper output) : TestBaseDb
+{
+    // Configure DI library
+    protected override void ConfigureAppServices(IServiceCollection services)
     {
-        // Configure DI library
-        protected override void ConfigureAppServices(IServiceCollection services)
-        {
-            base.ConfigureAppServices(services);
-            services.AddSingleton(_ => new SpecDriver(Database, Client));
-        }
-
-        [Theory, InlineData("ArwynFr")]
-        public async Task OnTest(string name)
-        {
-            await Services.GetRequiredService<SpecDriver>()
-                .Given(x => x.ThereIsEntityWithName(name))
-                .When(x => x.FindEntityWithName(name))
-                .Then(x => x.ResultShouldBe(name))
-                .ExecuteAsync();
-        }
+        base.ConfigureAppServices(services);
+        services.AddSingleton(_ => new SpecDriver(Database, Client));
     }
+
+    [Theory, InlineData("ArwynFr")]
+    public async Task OnTest(string name)
+    {
+        await Services.GetRequiredService<SpecDriver>()
+            .Given(x => x.ThereIsEntityWithName(name))
+            .When(x => x.FindEntityWithName(name))
+            .Then(x => x.ResultShouldBe(name))
+            .ExecuteAsync();
+    }
+}
+```cs
 
 ## Contributing
 
