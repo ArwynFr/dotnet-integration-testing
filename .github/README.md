@@ -77,7 +77,8 @@ public class TestBaseDb : IntegrationTestBase<Program, MyDbContext>
 
 ### Fluent specification-based testing
 
-First write a driver that tells the test framework how to execute AAA operations. This class can implement multiple operations of the same kind:
+First write a driver that tells the test framework how to execute AAA
+operations. This class can implement multiple operations of the same kind:
 
 ```cs
 public class SpecDriver(MyDbContext dbContext, HttpClient client) : TestDriverBase<SpecDriver>
@@ -113,7 +114,8 @@ public class SpecDriver(MyDbContext dbContext, HttpClient client) : TestDriverBa
 }
 ```
 
-Then write an integration test that injects the driver and use it to run fluent specification-based tests:
+Then write an integration test that injects the driver and use it to run
+fluent specification-based tests:
 
 ```cs
 public class SpecTest(ITestOutputHelper output) : TestBaseDb

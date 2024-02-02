@@ -66,6 +66,7 @@ jobs:
         with:
           files: .
           dot: true
+          rules: ./mardownlint.json
 
   not-outdated:
     runs-on: ubuntu-latest

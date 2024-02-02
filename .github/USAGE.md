@@ -25,10 +25,12 @@ application behaves as expected.
 Simply extend the `IntegrationTestBase<TEntryPoint>` class and provide
 the entrypoint class you want to test:
 
-    public class MyTest : IntegrationTestBase<Program>
-    {
-        public MyTest(ITestOutputHelper output) : base(output) { }
-    }
+```cs
+public class MyTest : IntegrationTestBase<Program>
+{
+    public MyTest(ITestOutputHelper output) : base(output) { }
+}
+```
 
 ## Arranging the tested application
 
@@ -59,23 +61,25 @@ Singleton lifetime. Accessing the DI container outside of the client
 call will return an unscoped provider as scopes are created and disposed
 by the framework for each request.
 
-    // Override a service with custom implementation in the tested app
-    protected override void ConfigureAppServices(IServiceCollection services)
-        => services.AddSingleton<IMyService, FakeService>();
+```cs
+// Override a service with custom implementation in the tested app
+protected override void ConfigureAppServices(IServiceCollection services)
+    => services.AddSingleton<IMyService, FakeService>();
 
-    [Fact]
-    public async Task OnTest()
-    {
-        var expected = 3;
+[Fact]
+public async Task OnTest()
+{
+    var expected = 3;
 
-        // Access the injected service from the test code
-        var service = Services.GetRequiredService<IMyService>();
-        service.SetValue(expected);
+    // Access the injected service from the test code
+    var service = Services.GetRequiredService<IMyService>();
+    service.SetValue(expected);
 
-        var response = await Client.GetFromJsonAsync<int>($"/value");
+    var response = await Client.GetFromJsonAsync<int>($"/value");
 
-        response.Should().Be(expected);
-    }
+    response.Should().Be(expected);
+}
+```
 
 ## Accessing the tested application
 
@@ -84,14 +88,14 @@ You can access the tested application using the `Client` property which
 returns a pseudo `HttpClient` created by `WebApplicationFactory`. You
 access your application like a client application would:
 
-<!-- -->
-
-    [Fact]
-    public async Task OnTest()
-    {
-        var response = await Client.GetFromJsonAsync<OrderDto>($"/order");
-        response.Should().HaveValue();
-    }
+```cs
+[Fact]
+public async Task OnTest()
+{
+    var response = await Client.GetFromJsonAsync<OrderDto>($"/order");
+    response.Should().HaveValue();
+}
+```
 
 Configuration  
 This property grants you acces to the `IConfiguration` values that are
@@ -131,8 +135,10 @@ context instance will be generated per test and injected in your target
 app as a singleton. You can access the same context instance in your
 test through the `Database` property.
 
-        protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
-            => builder.UseSqlite($"Data Source=test.sqlite");
+```cs
+protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
+    => builder.UseSqlite($"Data Source=test.sqlite");
+```
 
 The base class also exposes a `DatabaseTestStrategy` property that
 allows you to customize the test behavior regarding the database. You
@@ -164,12 +170,12 @@ database in parallel. Otherwise the tests will try to access the same
 database concurrently and will fail to drop it while other tests are
 running:
 
-<!-- -->
+```cs
+protected override IDatabaseTestStrategy<Context> DatabaseTestStrategy
+    => IDatabaseTestStrategy<Context>.DatabasePerTest;
 
-        protected override IDatabaseTestStrategy<Context> DatabaseTestStrategy
-            => IDatabaseTestStrategy<Context>.DatabasePerTest;
-
-        protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
-            => builder.UseSqlite($"Data Source={Guid.NewGuid()}.sqlite");
+protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
+    => builder.UseSqlite($"Data Source={Guid.NewGuid()}.sqlite");
+```
 
 This beahvior WILL drop your database after each test !
