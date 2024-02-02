@@ -77,64 +77,43 @@ public class TestBaseDb : IntegrationTestBase<Program, MyDbContext>
 
 ### Fluent specification-based testing
 
-First write a driver that tells the test framework how to execute AAA
-operations. This class can implement multiple operations of the same kind:
-
 ```cs
-public class SpecDriver(MyDbContext dbContext, HttpClient client) : TestDriverBase<SpecDriver>
+// Actual code redacted for brievty
+// Write a test driver that implements specifications:
+private class MySpecDriver(MyDbContext dbContext, HttpClient client) : TestDriverBase<SpecDriver>
 {
-    // Used to store the API call result
-    private string? result;
+    // Arranges
+    public async Task ThereIsEntityWithName(string name) { }
+    public async Task ThereIsNoEntityWithName(string name) { }
 
-    // Arrange
-    public async Task ThereIsAnEntity(string name)
-    {
-        dbContext.Entities.Add(new Entity { Name = name });
-        await dbContext.SaveChangesAsync();
-    }
+    // Acts
+    public async Task ListAllEntities() { }
+    public async Task FindEntityWithName(string name) { }
+    public async Task CreateEntity(EntityDetails payload) { }
 
-    // Another arrange
-    public async Task ThereIsNoEntity(string name)
-    {
-        await dbContext.Entities.Where(entity => entity.Name == name).ExecuteDeleteAsync();
-    }
-
-    // Act
-    public async Task FindEntityByName(string name)
-    {
-        result = await client.GetFromJsonAsync<string>($"/api/entities/{name}");
-    }
-
-    // Assert
-    public Task ResultShouldBe(string name)
-    {
-        Assert.Equal(name, result);
-        return Task.CompletedTask;
-    }
+    // Asserts
+    public async Task ResultShouldBe(string name) { }
+    public async Task DetailsCountShouldBe(int number) { }
 }
-```
 
-Then write an integration test that injects the driver and use it to run
-fluent specification-based tests:
-
-```cs
-public class SpecTest(ITestOutputHelper output) : TestBaseDb
+public class MySpecTest(ITestOutputHelper output) : TestBaseDb
 {
-    // Configure DI library
-    protected override void ConfigureAppServices(IServiceCollection services)
-    {
-        base.ConfigureAppServices(services);
-        services.AddSingleton(_ => new SpecDriver(Database, Client));
-    }
-
+    // Write fluent specifiation test:
     [Theory, InlineData("ArwynFr")]
     public async Task OnTest(string name)
     {
-        await Services.GetRequiredService<SpecDriver>()
+        await Services.GetRequiredService<MySpecDriver>()
             .Given(x => x.ThereIsEntityWithName(name))
             .When(x => x.FindEntityWithName(name))
             .Then(x => x.ResultShouldBe(name))
             .ExecuteAsync();
+    }
+
+    // Configure DI library
+    protected override void ConfigureAppServices(IServiceCollection services)
+    {
+        base.ConfigureAppServices(services);
+        services.AddSingleton(_ => new MySpecDriver(Database, Client));
     }
 }
 ```
