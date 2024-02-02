@@ -10,11 +10,11 @@ License](https://img.shields.io/github/license/ArwynFr/dotnet-integration-testin
 
 ## Installation
 
-```
+```shell
 dotnet new classlib -n MyTestProject
 ```
 
-```
+```shell
 dotnet add package ArwynFr.IntegrationTesting
 dotnet add pacakge Microsoft.NET.Test.Sdk
 dotnet add package xunit.runner.visualstudio
