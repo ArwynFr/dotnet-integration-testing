@@ -10,7 +10,15 @@ License](https://img.shields.io/github/license/ArwynFr/dotnet-integration-testin
 
 ## Installation
 
-    dotnet add package ArwynFr.IntegrationTesting
+```shell
+dotnet new classlib -n MyTestProject
+```
+
+```shell
+dotnet add package ArwynFr.IntegrationTesting
+dotnet add pacakge Microsoft.NET.Test.Sdk
+dotnet add package xunit.runner.visualstudio
+```
 
 ## Usage
 
@@ -23,53 +31,100 @@ output, so you get them in the test output in case of failure. It also
 overwrites the application configuration with values from user secrets
 and environement variables.
 
-    public class MyTest : IntegrationTestBase<Program>
+```cs
+public class MyTest : IntegrationTestBase<Program>
+{
+    public MyTest(ITestOutputHelper output) : base(output) { }
+
+    [Fact]
+    public async Task OnTest()
     {
-        public MyTest(ITestOutputHelper output) : base(output) { }
+        // Call system under test
+        var response = await Client.GetFromJsonAsync<OrderDto>($"/order");
 
-        [Fact]
-        public async Task OnTest()
-        {
-            // Call system under test
-            var response = await Client.GetFromJsonAsync<OrderDto>($"/order");
-
-            response.Should().HaveValue();
-        }
-
-        // Override a service with fake implementation in the tested app
-        protected override void ConfigureAppServices(IServiceCollection services)
-            => services.AddSingleton<IMyService, FakeService>();
+        response.Should().HaveValue();
     }
+
+    // Override a service with fake implementation in the tested app
+    protected override void ConfigureAppServices(IServiceCollection services)
+        => services.AddSingleton<IMyService, FakeService>();
+}
+```
 
 ### EntityFrameworkCore integration
 
-    public class TestBaseDb : IntegrationTestBase<Program, MyDbContext>
+```cs
+public class TestBaseDb : IntegrationTestBase<Program, MyDbContext>
+{
+    public TestBaseDb(ITestOutputHelper output) : base(output) { }
+
+    [Fact]
+    public async Task OnTest()
     {
-        public TestBaseDb(ITestOutputHelper output) : base(output) { }
+        // Access the injected dbcontext
+        var value = await Database.Values
+            .Where(val => val.Id == 1)
+            .Select(val => val.Result)
+            .FirstOrDefaultAsync();
 
-        [Fact]
-        public async Task OnTest()
-        {
-            // Access the injected dbcontext
-            var value = await Database.Values
-                .Where(val => val.Id == 1)
-                .Select(val => val.Result)
-                .FirstOrDefaultAsync();
+        // Call system under test
+        var result = await Client.GetFromJsonAsync<int>("/api/value/1");
 
-            // Call system under test
-            var result = await Client.GetFromJsonAsync<int>("/api/value/1");
-
-            result.Should().Be(value + 1);
-        }
-
-        // Create and drop a database for every test execution
-        protected override IDatabaseTestStrategy<Context> DatabaseTestStrategy
-            => IDatabaseTestStrategy<MyDbContext>.DatabasePerTest;
-
-        // Configure EFcore with a random database name
-        protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
-            => builder.UseSqlite($"Data Source={Guid.NewGuid()}.sqlite");
+        result.Should().Be(value + 1);
     }
+
+    // Create and drop a database for every test execution
+    protected override IDatabaseTestStrategy<Context> DatabaseTestStrategy
+        => IDatabaseTestStrategy<MyDbContext>.DatabasePerTest;
+
+    // Configure EFcore with a random database name
+    protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
+        => builder.UseSqlite($"Data Source={Guid.NewGuid()}.sqlite");
+}
+```
+
+### Fluent specification-based testing
+
+```cs
+// Actual code redacted for brievty
+// Write a test driver that implements specifications:
+private class MySpecDriver(MyDbContext dbContext, HttpClient client) : TestDriverBase<SpecDriver>
+{
+    // Arranges
+    public async Task ThereIsEntityWithName(string name) { }
+    public async Task ThereIsNoEntityWithName(string name) { }
+
+    // Acts
+    public async Task ListAllEntities() { }
+    public async Task FindEntityWithName(string name) { }
+    public async Task CreateEntity(EntityDetails payload) { }
+
+    // Asserts
+    public async Task ResultShouldBe(string name) { }
+    public async Task DetailsCountShouldBe(int number) { }
+}
+
+public class MySpecTest(ITestOutputHelper output) : TestBaseDb
+{
+    // Write fluent specifiation test:
+    [Theory, InlineData("ArwynFr")]
+    public async Task OnTest(string name)
+    {
+        await Services.GetRequiredService<MySpecDriver>()
+            .Given(x => x.ThereIsEntityWithName(name))
+            .When(x => x.FindEntityWithName(name))
+            .Then(x => x.ResultShouldBe(name))
+            .ExecuteAsync();
+    }
+
+    // Configure DI library
+    protected override void ConfigureAppServices(IServiceCollection services)
+    {
+        base.ConfigureAppServices(services);
+        services.AddSingleton(_ => new MySpecDriver(Database, Client));
+    }
+}
+```
 
 ## Contributing
 

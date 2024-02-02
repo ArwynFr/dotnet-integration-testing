@@ -66,6 +66,7 @@ jobs:
         with:
           files: .
           dot: true
+          config_file: ./markdownlint.yaml
 
   not-outdated:
     runs-on: ubuntu-latest
