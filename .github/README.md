@@ -41,7 +41,7 @@ public class MyTest : IntegrationTestBase<Program>
     protected override void ConfigureAppServices(IServiceCollection services)
         => services.AddSingleton<IMyService, FakeService>();
 }
-```cs
+```
 
 ### EntityFrameworkCore integration
 
@@ -73,7 +73,7 @@ public class TestBaseDb : IntegrationTestBase<Program, MyDbContext>
     protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
         => builder.UseSqlite($"Data Source={Guid.NewGuid()}.sqlite");
 }
-```cs
+```
 
 ### Fluent specification-based testing
 
@@ -111,7 +111,7 @@ public class SpecDriver(MyDbContext dbContext, HttpClient client) : TestDriverBa
         return Task.CompletedTask;
     }
 }
-```cs
+```
 
 Then write an integration test that injects the driver and use it to run fluent specification-based tests:
 
@@ -135,7 +135,7 @@ public class SpecTest(ITestOutputHelper output) : TestBaseDb
             .ExecuteAsync();
     }
 }
-```cs
+```
 
 ## Contributing
 
