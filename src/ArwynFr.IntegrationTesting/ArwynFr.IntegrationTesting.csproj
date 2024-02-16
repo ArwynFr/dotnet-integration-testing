@@ -23,7 +23,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
-    <PackageReference Include="XUnit" Version="2.6.6" />
+    <PackageReference Include="XUnit" Version="2.7.0" />
   </ItemGroup>
 
   <ItemGroup>
