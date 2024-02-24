@@ -7,7 +7,6 @@ where TContext : DbContext
 {
     private bool transaction = false;
     private bool transient = false;
-    private bool update = false;
 
     public async Task DisposeAsync(TContext database)
     {
@@ -16,20 +15,17 @@ where TContext : DbContext
 
     public async Task InitializeAsync(TContext database)
     {
-        if (transient) { await database.Database.EnsureDeletedAsync(); }
-        if (update || transient) { await UpdateDatabase(database); }
+        if (transient)
+        {
+            await database.Database.EnsureDeletedAsync();
+            await UpdateDatabase(database);
+        }
         if (transaction) { await database.Database.BeginTransactionAsync(); }
     }
 
     public DatabaseTestStrategy<TContext> WithPerTest()
     {
         transient = true;
-        return this;
-    }
-
-    public DatabaseTestStrategy<TContext> WithSchemaUpdate()
-    {
-        update = true;
         return this;
     }
 

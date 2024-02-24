@@ -12,10 +12,10 @@ public class DummyController : ControllerBase
     public DummyController(DummyDbContext dbContext) => _dbContext = dbContext;
 
     [HttpGet("/api/entities/{name}")]
-    public async Task<Results<Ok<string>, NotFound<string>>> ExecuteAsync(string name)
+    public async Task<Results<Ok<DummyEntity>, NotFound<string>>> ExecuteAsync(string name)
     {
         var value = await _dbContext.Entities.FirstOrDefaultAsync(entity => entity.Name == name);
         if (value == null) { return TypedResults.NotFound("Not found"); }
-        return TypedResults.Ok(value.Name);
+        return TypedResults.Ok(value);
     }
 }

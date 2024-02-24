@@ -5,6 +5,7 @@ using OpenTelemetry.Trace;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IDummyService, DummyService>();
 builder.Services.AddSqlite<DummyDbContext>("invalid");
+builder.Services.AddSqlite<MigrationDbContext>("invalid");
 builder.Services.AddControllers();
 var app = builder.Build();
 app.MapGet("/", () => "Hello World!");
