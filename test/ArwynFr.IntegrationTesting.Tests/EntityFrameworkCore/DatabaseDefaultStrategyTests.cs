@@ -23,9 +23,6 @@ public class DatabaseDefaultStrategyTests(ITestOutputHelper output) : Integratio
         await base.InitializeAsync();
     }
 
-    protected override IDatabaseTestStrategy<DummyDbContext> DatabaseTestStrategy
-        => IDatabaseTestStrategy<DummyDbContext>.Default;
-
     protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
         => builder.UseSqlite($@"Data Source={Guid.NewGuid()}.sqlite");
 }

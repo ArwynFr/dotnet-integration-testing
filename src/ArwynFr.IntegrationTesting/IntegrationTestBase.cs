@@ -1,9 +1,14 @@
+using System.Diagnostics;
+
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+
+using OpenTelemetry;
+using OpenTelemetry.Trace;
 
 using Xunit;
 using Xunit.Abstractions;
@@ -13,16 +18,18 @@ namespace ArwynFr.IntegrationTesting;
 public abstract class IntegrationTestBase<TProgram> : IAsyncLifetime
 where TProgram : class
 {
-    private readonly ITestOutputHelper output;
+    private readonly XUnitLoggerProvider provider;
 
     protected IntegrationTestBase(ITestOutputHelper output)
     {
-        this.output = output;
+        provider = new XUnitLoggerProvider(output);
         var factory = new WebApplicationFactory<TProgram>().WithWebHostBuilder(ConfigureWebHostBuilder);
         Client = factory.CreateClient();
         Services = factory.Services;
         Configuration = factory.Services.GetRequiredService<IConfiguration>();
     }
+
+    protected IEnumerable<Activity> Activities { get; } = new List<Activity>();
 
     protected HttpClient Client { get; }
 
@@ -30,7 +37,13 @@ where TProgram : class
 
     protected IServiceProvider Services { get; }
 
-    public virtual Task DisposeAsync() => Task.CompletedTask;
+    protected virtual string[] OpenTelemetrySourceNames { get; } = [];
+
+    public virtual Task DisposeAsync()
+    {
+        provider.Dispose();
+        return Task.CompletedTask;
+    }
 
     public virtual Task InitializeAsync() => Task.CompletedTask;
 
@@ -43,10 +56,15 @@ where TProgram : class
     protected virtual void ConfigureAppLogging(WebHostBuilderContext context, ILoggingBuilder builder)
     {
         builder.ClearProviders();
-        builder.AddProvider(new XUnitLoggerProvider(output));
+        builder.AddProvider(provider);
     }
 
-    protected virtual void ConfigureAppServices(IServiceCollection services) { }
+    protected virtual void ConfigureAppServices(IServiceCollection services) => services.AddSingleton(
+        Sdk.CreateTracerProviderBuilder()
+            .AddSource(OpenTelemetrySourceNames)
+            .AddAspNetCoreInstrumentation()
+            .AddInMemoryExporter(Activities as ICollection<Activity>)
+            .Build());
 
     protected virtual void ConfigureWebHostBuilder(IWebHostBuilder builder)
     {

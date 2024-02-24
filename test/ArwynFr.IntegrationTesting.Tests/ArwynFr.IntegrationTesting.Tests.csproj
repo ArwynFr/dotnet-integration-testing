@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\ArwynFr.IntegrationTesting\ArwynFr.IntegrationTesting.csproj" />
+    <ProjectReference Include="..\..\src\ArwynFr.IntegrationTesting\ArwynFr.IntegrationTesting.csproj" />
     <ProjectReference Include="..\ArwynFr.IntegrationTesting.Tests.Target\ArwynFr.IntegrationTesting.Tests.Target.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.0">
+    <PackageReference Include="coverlet.collector" Version="6.0.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
