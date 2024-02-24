@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\ArwynFr.IntegrationTesting\ArwynFr.IntegrationTesting.csproj" />
+    <ProjectReference Include="..\..\src\ArwynFr.IntegrationTesting\ArwynFr.IntegrationTesting.csproj" />
     <ProjectReference Include="..\ArwynFr.IntegrationTesting.Tests.Target\ArwynFr.IntegrationTesting.Tests.Target.csproj" />
   </ItemGroup>
 

@@ -5,9 +5,9 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArwynFr.IntegrationTesting", "src\ArwynFr.IntegrationTesting\ArwynFr.IntegrationTesting.csproj", "{C9275A34-F1C9-4B74-8AC0-CA397DD43B00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArwynFr.IntegrationTesting.Tests", "src\ArwynFr.IntegrationTesting.Tests\ArwynFr.IntegrationTesting.Tests.csproj", "{680ECFFB-9C44-4032-94F2-952D4C931488}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArwynFr.IntegrationTesting.Tests", "test\ArwynFr.IntegrationTesting.Tests\ArwynFr.IntegrationTesting.Tests.csproj", "{680ECFFB-9C44-4032-94F2-952D4C931488}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArwynFr.IntegrationTesting.Tests.Target", "src\ArwynFr.IntegrationTesting.Tests.Target\ArwynFr.IntegrationTesting.Tests.Target.csproj", "{1ABA3A21-928C-44E2-8E72-3F004BBB1FDD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArwynFr.IntegrationTesting.Tests.Target", "test\ArwynFr.IntegrationTesting.Tests.Target\ArwynFr.IntegrationTesting.Tests.Target.csproj", "{1ABA3A21-928C-44E2-8E72-3F004BBB1FDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
