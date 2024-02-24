@@ -4,7 +4,7 @@ namespace ArwynFr.IntegrationTesting.Tests.Target;
 
 public class MigrationDbContext : DbContext
 {
-  public MigrationDbContext(DbContextOptions<MigrationDbContext> options) : base(options) { }
+    public MigrationDbContext(DbContextOptions<MigrationDbContext> options) : base(options) { }
 
-  public DbSet<DummyEntity> Entities { get; set; }
+    public DbSet<DummyEntity> Entities => Set<DummyEntity>();
 }
