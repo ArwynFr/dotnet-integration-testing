@@ -35,7 +35,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
       - name: Run automated tests
-        run: dotnet test src/ArwynFr.IntegrationTesting.Tests --settings .runsettings --results-directory TestResults
+        run: dotnet test test/ArwynFr.IntegrationTesting.Tests --settings .runsettings --results-directory TestResults
       - name: SonarCloud analyze
         run: dotnet sonarscanner end
         env:
@@ -43,9 +43,6 @@ jobs:
 
   code-lint:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: src
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -70,9 +67,6 @@ jobs:
 
   not-outdated:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: src
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4

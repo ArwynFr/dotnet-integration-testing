@@ -9,6 +9,6 @@ jobs:
   deployment:
     uses: ArwynFr/ArwynFr/.github/workflows/deployment-nuget.yaml@main
     with:
-      target: ./src
+      target: .
     secrets:
       NUGET_APIKEY: ${{ secrets.NUGET_APIKEY }}
