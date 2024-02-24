@@ -17,13 +17,26 @@ where TContext : DbContext
 
     protected virtual IDatabaseTestStrategy<TContext> DatabaseTestStrategy => IDatabaseTestStrategy<TContext>.Default;
 
-    public override Task DisposeAsync() => DatabaseTestStrategy.DisposeAsync(Database);
+    public override async Task DisposeAsync()
+    {
+        await DatabaseTestStrategy.DisposeAsync(Database);
+        await base.DisposeAsync();
+    }
 
-    public override Task InitializeAsync() => DatabaseTestStrategy.InitializeAsync(Database);
+    public override async Task InitializeAsync()
+    {
+        await base.InitializeAsync();
+        await DatabaseTestStrategy.InitializeAsync(Database);
+    }
 
-    protected override void ConfigureAppServices(IServiceCollection services) => services.AddSingleton(new ServiceCollection()
-        .AddDbContext<TContext>(ConfigureDbContext, ServiceLifetime.Singleton)
-        .BuildServiceProvider().GetRequiredService<TContext>());
+    protected override void ConfigureAppServices(IServiceCollection services)
+    {
+        base.ConfigureAppServices(services);
+        services.AddSingleton(new ServiceCollection()
+            .AddDbContext<TContext>(ConfigureDbContext, ServiceLifetime.Singleton)
+            .BuildServiceProvider()
+            .GetRequiredService<TContext>());
+    }
 
     protected abstract void ConfigureDbContext(DbContextOptionsBuilder builder);
 
