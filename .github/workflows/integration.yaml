@@ -35,7 +35,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
       - name: Run automated tests
-        run: dotnet test src/ArwynFr.IntegrationTesting.Tests --settings runsettings.xml --results-directory TestResults
+        run: dotnet test src/ArwynFr.IntegrationTesting.Tests --settings .runsettings --results-directory TestResults
       - name: SonarCloud analyze
         run: dotnet sonarscanner end
         env:
@@ -66,7 +66,7 @@ jobs:
         with:
           files: .
           dot: true
-          config_file: ./markdownlint.yaml
+          config_file: .markdownlint
 
   not-outdated:
     runs-on: ubuntu-latest
