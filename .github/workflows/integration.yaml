@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4        
         with:
-          clean: 'true'          
+          fetch-depth: 0
 
       - name: Install Java 21 Temurin
         uses: actions/setup-java@v4
