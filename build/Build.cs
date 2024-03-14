@@ -76,7 +76,7 @@ class Build : NukeBuild
         });
 
     Target Clean => _ => _
-        .Before(VerifyFormat, VerifySonarqube, RestoreTools)
+        .Before(RestoreTools)
         .Executes(() =>
         {
             DotNetTasks.DotNetClean();
@@ -84,6 +84,19 @@ class Build : NukeBuild
             NugetGlob.GlobFiles().DeleteFiles();
             DotSonar.DeleteDirectory();
         });
+
+    Target Fix => _ => _
+        .Before(Verifying)
+        .DependsOn(RestoreTools)
+        .Executes(() =>
+        {
+            DotNetTasks.DotNet("tool run dotnet-outdated -- --upgrade");
+            DotNetTasks.DotNetFormat();
+        });
+
+    Target Verifying => _ => _
+        .DependentFor(VerifyFormat, VerifyOutdated, VerifyRoslyn, VerifySonarqube)
+        .Unlisted();
 
     Target Verify => _ => _
         .DependsOn(VerifyFormat, VerifyOutdated, VerifyRoslyn, VerifySonarqube);
@@ -94,6 +107,7 @@ class Build : NukeBuild
             .SetProject(Solution.ArwynFr_IntegrationTesting)
             .SetProperty("Version", OctoVersionInfo.FullSemVer)
             .SetOutputDirectory(RootDirectory)));
+
     Target Publish => _ => _
         .DependsOn(Pack)
         .Requires(() => NugetApikey)
@@ -114,7 +128,7 @@ class Build : NukeBuild
 
     Target Tags => _ => _
         .Unlisted()
-        .TriggeredBy(Release)
+        .TriggeredBy(Publish)
         .OnlyWhenStatic(() => !IsPreRelease)
         .Executes(() =>
         {
