@@ -71,7 +71,8 @@ class Build : NukeBuild
                 .AddRunSetting(Constants.XUnit.FormatSetting, Constants.XUnit.OpenCoverFormat)
                 .AddRunSetting(Constants.XUnit.IncludeSetting, TestIncludes));
 
-            SonarScannerTasks.SonarScannerEnd();
+            SonarScannerTasks.SonarScannerEnd(_ => _
+                .SetToken(SonarToken));
         });
 
     Target Clean => _ => _
