@@ -19,7 +19,7 @@ jobs:
           java-version: "21"
 
       - name: Publish using nuke
-        run: build.sh Clean Publish
+        run: ./build.sh Clean Publish
         env:
           GH_TOKEN: ${{ github.token }}
           SONAR_TOKEN: ${{ secrets.sonar_token }}
