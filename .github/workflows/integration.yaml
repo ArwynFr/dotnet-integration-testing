@@ -23,6 +23,6 @@ jobs:
           java-version: "21"
 
       - name: Verify using nuke
-        run: ./build.sh Clean Verify
+        run: ./build.cmd Clean Verify
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
