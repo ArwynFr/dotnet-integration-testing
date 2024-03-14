@@ -4,73 +4,25 @@ on:
   workflow_dispatch:
   pull_request:
     branches: [main]
-  push:
-    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  sonarqube:
+  integration:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
-      - name: Use Java 21 Temuerin
+
+      - name: Install Java 21 Temurin
         uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: "21"
-      - name: Restore dotnet tools
-        run: dotnet tool restore
-      - name: SonarCloud configuration
-        run: >
-          dotnet sonarscanner begin
-          /o:arwynfr
-          /key:ArwynFr_dotnet-integration-testing
-          /d:sonar.host.url=https://sonarcloud.io
-          /d:sonar.cs.opencover.reportsPaths=TestResults/*/coverage.opencover.xml
-          /d:sonar.verbose=true
+
+      - name: Verify using nuke
+        run: build.sh Clean Verify
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
-      - name: Run automated tests
-        run: dotnet test test/ArwynFr.IntegrationTesting.Tests --settings .runsettings --results-directory TestResults
-      - name: SonarCloud analyze
-        run: dotnet sonarscanner end
-        env:
-          SONAR_TOKEN: ${{ secrets.sonar_token }}
-
-  code-lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v4
-      - name: Restore dotnet tools
-        run: dotnet tool restore
-      - name: Check dotnet-format
-        run: dotnet format --verify-no-changes
-      - name: Check roslynator
-        run: dotnet roslynator analyze
-
-  docs-lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v4
-      - name: Check markdown
-        uses: nosborn/github-action-markdown-cli@v3.3.0
-        with:
-          files: .
-          dot: true
-          config_file: .markdownlint
-
-  not-outdated:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v4
-      - name: Restore dotnet tools
-        run: dotnet tool restore
-      - name: Check outdated nuget packages
-        run: dotnet outdated --fail-on-updates
