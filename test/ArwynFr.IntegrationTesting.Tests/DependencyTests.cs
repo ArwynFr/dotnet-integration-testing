@@ -1,11 +1,7 @@
-﻿using System.Net.Http.Json;
-
-using ArwynFr.IntegrationTesting.Tests.Target;
-
+﻿using ArwynFr.IntegrationTesting.Tests.Target;
 using FluentAssertions;
-
 using Microsoft.Extensions.DependencyInjection;
-
+using System.Net.Http.Json;
 using Xunit;
 using Xunit.Abstractions;
 

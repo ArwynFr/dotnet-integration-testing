@@ -3,7 +3,6 @@ using ArwynFr.IntegrationTesting.Tests.Target;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-
 #nullable disable
 
 namespace ArwynFr.IntegrationTesting.Tests.Target.Migrations

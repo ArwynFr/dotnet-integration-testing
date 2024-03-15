@@ -1,8 +1,6 @@
-using System.Linq.Expressions;
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-
+using System.Linq.Expressions;
 using Xunit.Abstractions;
 
 namespace ArwynFr.IntegrationTesting;

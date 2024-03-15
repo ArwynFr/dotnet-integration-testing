@@ -1,19 +1,12 @@
-using Microsoft.Extensions.Logging;
-
+﻿using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
 namespace ArwynFr.IntegrationTesting;
 
-internal sealed class XunitLogger : ILogger
+internal sealed class XunitLogger(string categoryName, ITestOutputHelper output) : ILogger
 {
-    private readonly string categoryName;
-    private readonly ITestOutputHelper output;
-
-    public XunitLogger(string categoryName, ITestOutputHelper output)
-    {
-        this.categoryName = categoryName;
-        this.output = output;
-    }
+    private readonly string categoryName = categoryName;
+    private readonly ITestOutputHelper output = output;
 
     public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
 

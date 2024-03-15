@@ -1,7 +1,5 @@
 ﻿using ArwynFr.IntegrationTesting.Tests.Target;
-
 using FluentAssertions;
-
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
