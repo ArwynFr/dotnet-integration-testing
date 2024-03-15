@@ -120,7 +120,7 @@ class Build : NukeBuild
         .TriggeredBy(Publish)
         .Requires(() => GhToken)
         .Executes(() => Gh.Invoke(
-            arguments: $"release create '{OctoVersionInfo.FullSemVer}' --generate-notes",
+            arguments: $"release create {OctoVersionInfo.FullSemVer} --generate-notes",
             environmentVariables: EnvironmentInfo.Variables
                 .ToDictionary(x => x.Key, x => x.Value)
                 .SetKeyValue("GH_TOKEN", GhToken).AsReadOnly()));
@@ -131,8 +131,8 @@ class Build : NukeBuild
         .OnlyWhenStatic(() => !IsPreRelease)
         .Executes(() =>
         {
-            Git.Invoke($"tag --force 'v{OctoVersionInfo.Major}.{OctoVersionInfo.Minor}'");
-            Git.Invoke($"tag --force 'v{OctoVersionInfo.Major}'");
+            Git.Invoke($"tag --force v{OctoVersionInfo.Major}.{OctoVersionInfo.Minor}");
+            Git.Invoke($"tag --force v{OctoVersionInfo.Major}");
             Git.Invoke("push origin --tags --force");
         });
 }
