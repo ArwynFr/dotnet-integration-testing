@@ -1,10 +1,8 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace ArwynFr.IntegrationTesting.Tests.Target;
 
-public class MigrationDbContext : DbContext
+public class MigrationDbContext(DbContextOptions<MigrationDbContext> options) : DbContext(options)
 {
-    public MigrationDbContext(DbContextOptions<MigrationDbContext> options) : base(options) { }
-
     public DbSet<DummyEntity> Entities => Set<DummyEntity>();
 }

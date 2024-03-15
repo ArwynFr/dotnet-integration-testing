@@ -9,12 +9,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArwynFr.IntegrationTesting.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArwynFr.IntegrationTesting.Tests.Target", "test\ArwynFr.IntegrationTesting.Tests.Target\ArwynFr.IntegrationTesting.Tests.Target.csproj", "{1ABA3A21-928C-44E2-8E72-3F004BBB1FDD}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{F460EC84-68E4-4FC5-B767-E3843056FAA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F460EC84-68E4-4FC5-B767-E3843056FAA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F460EC84-68E4-4FC5-B767-E3843056FAA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9275A34-F1C9-4B74-8AC0-CA397DD43B00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C9275A34-F1C9-4B74-8AC0-CA397DD43B00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9275A34-F1C9-4B74-8AC0-CA397DD43B00}.Release|Any CPU.ActiveCfg = Release|Any CPU

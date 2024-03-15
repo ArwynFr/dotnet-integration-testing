@@ -1,21 +1,18 @@
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArwynFr.IntegrationTesting.Tests.Target;
 
 [ApiController]
-public class DummyController : ControllerBase
+public class DummyController(DummyDbContext dbContext) : ControllerBase
 {
-    private readonly DummyDbContext _dbContext;
-
-    public DummyController(DummyDbContext dbContext) => _dbContext = dbContext;
+    private readonly DummyDbContext _dbContext = dbContext;
 
     [HttpGet("/api/entities/{name}")]
     public async Task<Results<Ok<DummyEntity>, NotFound<string>>> ExecuteAsync(string name)
     {
         var value = await _dbContext.Entities.FirstOrDefaultAsync(entity => entity.Name == name);
-        if (value == null) { return TypedResults.NotFound("Not found"); }
-        return TypedResults.Ok(value);
+        return value == null ? (Results<Ok<DummyEntity>, NotFound<string>>)TypedResults.NotFound("Not found") : (Results<Ok<DummyEntity>, NotFound<string>>)TypedResults.Ok(value);
     }
 }

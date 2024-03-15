@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace ArwynFr.IntegrationTesting;
 
@@ -10,7 +10,10 @@ where TContext : DbContext
 
     public async Task DisposeAsync(TContext database)
     {
-        if (transient) { await database.Database.EnsureDeletedAsync(); }
+        if (transient)
+        {
+            await database.Database.EnsureDeletedAsync();
+        }
     }
 
     public async Task InitializeAsync(TContext database)
@@ -20,7 +23,10 @@ where TContext : DbContext
             await database.Database.EnsureDeletedAsync();
             await UpdateDatabase(database);
         }
-        if (transaction) { await database.Database.BeginTransactionAsync(); }
+        if (transaction)
+        {
+            await database.Database.BeginTransactionAsync();
+        }
     }
 
     public DatabaseTestStrategy<TContext> WithPerTest()

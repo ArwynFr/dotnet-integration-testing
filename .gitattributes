@@ -1,2 +1,5 @@
-* text eol=crlf
+* text=auto eol=crlf
+*.cs text eol=crlf
 *.png -text
+build.sh text eol=lf
+build.cmd text eol=lf

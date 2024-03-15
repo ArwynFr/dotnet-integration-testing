@@ -486,3 +486,6 @@ $RECYCLE.BIN/
 
 # Sonarqube
 .sonarqube
+
+# Nuke temp directory
+.nuke/temp

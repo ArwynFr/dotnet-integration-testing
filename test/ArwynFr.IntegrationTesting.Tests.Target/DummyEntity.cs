@@ -1,4 +1,4 @@
-namespace ArwynFr.IntegrationTesting.Tests.Target;
+﻿namespace ArwynFr.IntegrationTesting.Tests.Target;
 
 public class DummyEntity
 {

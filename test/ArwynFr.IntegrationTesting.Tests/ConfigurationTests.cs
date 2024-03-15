@@ -1,7 +1,5 @@
 ﻿using FluentAssertions;
-
 using Microsoft.Extensions.Configuration;
-
 using Xunit;
 using Xunit.Abstractions;
 
