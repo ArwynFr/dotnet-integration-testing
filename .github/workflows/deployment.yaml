@@ -15,9 +15,8 @@ jobs:
           fetch-depth: 0
 
       - name: Publish using nuke
-        run: ./build.cmd Clean Publish
+        run: JAVA_HOME=$JAVA_HOME_21_X64 ./build.cmd Clean Publish
         env:
           GH_TOKEN: ${{ github.token }}
           SONAR_TOKEN: ${{ secrets.sonar_token }}
           NUGET_APIKEY: ${{ secrets.nuget_apikey }}
-          JAVA_HOME: ${{ env.JAVA_HOME_21_X64 }}

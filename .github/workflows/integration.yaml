@@ -19,12 +19,9 @@ jobs:
           fetch-depth: 0
 
       - name: Java version
-        run: env | grep "JAVA_HOME"
-        env:
-          JAVA_HOME: ${{ env.JAVA_HOME_21_X64 }}
+        run: JAVA_HOME=$JAVA_HOME_21_X64 env | grep "JAVA_HOME"
 
       - name: Verify using nuke
-        run: ./build.sh Clean Verify
+        run: JAVA_HOME=$JAVA_HOME_21_X64 ./build.sh Clean Verify
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
-          JAVA_HOME: ${{ env.JAVA_HOME_21_X64 }}
