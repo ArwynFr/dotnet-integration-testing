@@ -20,6 +20,8 @@ jobs:
 
       - name: Java version
         run: env | grep "JAVA_HOME"
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME_21_X64 }}
 
       - name: Verify using nuke
         run: ./build.sh Clean Verify
