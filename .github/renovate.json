@@ -15,5 +15,6 @@
             "matchCurrentVersion": ">= 1.0.0",
             "automerge": true
         }
-    ]
+    ],
+    "ignorePaths": []
 }
