@@ -8,11 +8,12 @@
     "packageRules": [
         {
             "matchUpdateTypes": [
+                "minor",
                 "patch",
                 "digest",
                 "pinDigest"
             ],
-            "matchCurrentVersion": ">= 1.0.0",
+            "matchCurrentVersion": "!/^0/",
             "automerge": true
         }
     ],
