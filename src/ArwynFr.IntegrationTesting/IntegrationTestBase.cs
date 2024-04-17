@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using OpenTelemetry;
 using OpenTelemetry.Trace;
 using System.Diagnostics;
 using Xunit;
@@ -56,12 +55,11 @@ where TProgram : class
         builder.AddProvider(provider);
     }
 
-    protected virtual void ConfigureAppServices(IServiceCollection services) => services.AddSingleton(
-        Sdk.CreateTracerProviderBuilder()
+    protected virtual void ConfigureAppServices(IServiceCollection services) => services.AddOpenTelemetry()
+        .WithTracing(builder => builder
             .AddSource(OpenTelemetrySourceNames)
             .AddAspNetCoreInstrumentation()
-            .AddInMemoryExporter(Activities as ICollection<Activity>)
-            .Build());
+            .AddInMemoryExporter(Activities as ICollection<Activity>));
 
     protected virtual void ConfigureWebHostBuilder(IWebHostBuilder builder)
     {
