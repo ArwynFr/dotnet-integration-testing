@@ -105,6 +105,8 @@ class Build : NukeBuild
         .Executes(() => DotNetTasks.DotNetPack(_ => _
             .SetProject(Solution.ArwynFr_IntegrationTesting)
             .SetProperty("Version", OctoVersionInfo.FullSemVer)
+            .SetProperty("IncludeSymbols", true)
+            .SetProperty("SymbolPackageFormat", "snupkg")
             .SetOutputDirectory(RootDirectory)));
 
     Target Publish => _ => _
