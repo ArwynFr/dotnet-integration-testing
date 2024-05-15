@@ -15,6 +15,11 @@
     <RepositoryUrl>https://github.com/ArwynFr/dotnet-integration-testing</RepositoryUrl>
     <PackageTags>xunit;integration-testing;WebApplicationFactory</PackageTags>
     <PackageIcon>logo.png</PackageIcon>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <ItemGroup>
