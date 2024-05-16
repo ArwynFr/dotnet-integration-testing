@@ -83,45 +83,23 @@ public class TestBaseDb : IntegrationTestBase<Program, MyDbContext>
 }
 ```
 
-### Fluent specification-based testing
+### OpenTelemetry integration
 
 ```cs
-// Actual code redacted for brievty
-// Write a test driver that implements specifications:
-private class MySpecDriver(MyDbContext dbContext, HttpClient client) : TestDriverBase<SpecDriver>
+public class OpenTelemetryTests(ITestOutputHelper output) : IntegrationTestBase<Program>(output)
 {
-    // Arranges
-    public async Task ThereIsEntityWithName(string name) { }
-    public async Task ThereIsNoEntityWithName(string name) { }
+    // Tell the library which OTEL sources you want to monitor
+    // Traces from other sources will be ignored
+    protected override string[] OpenTelemetrySourceNames => ["SourceA", "SourceB"];
 
-    // Acts
-    public async Task ListAllEntities() { }
-    public async Task FindEntityWithName(string name) { }
-    public async Task CreateEntity(EntityDetails payload) { }
-
-    // Asserts
-    public async Task ResultShouldBe(string name) { }
-    public async Task DetailsCountShouldBe(int number) { }
-}
-
-public class MySpecTest(ITestOutputHelper output) : TestBaseDb
-{
-    // Write fluent specifiation test:
-    [Theory, InlineData("ArwynFr")]
-    public async Task OnTest(string name)
+    [Fact]
+    public async Task Otel()
     {
-        await Services.GetRequiredService<MySpecDriver>()
-            .Given(x => x.ThereIsEntityWithName(name))
-            .When(x => x.FindEntityWithName(name))
-            .Then(x => x.ResultShouldBe(name))
-            .ExecuteAsync();
-    }
+        // Call system under test
+        await Client.GetAsync("/otel");
 
-    // Configure DI library
-    protected override void ConfigureAppServices(IServiceCollection services)
-    {
-        base.ConfigureAppServices(services);
-        services.AddSingleton(_ => new MySpecDriver(Database, Client));
+        // Assert on the collection of all activities collected
+        Activities.Any(activity => activity.DisplayName == "Hello").Should().BeTrue();
     }
 }
 ```
@@ -131,26 +109,23 @@ public class MySpecTest(ITestOutputHelper output) : TestBaseDb
 This project welcomes contributions:
 
 **Request for support:**  
-TBD
+We do not provide support for this product.
 
 **Disclose vulnerability:**  
-Please [create a new security advisory on GitHub](https://github.com/ArwynFr/dotnet-integration-testing/security/advisories)
-\
-[Read our security policy](https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/SECURITY.md)
+[Read our security policy](https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/SECURITY.md)  
+[Create a new security advisory on GitHub](https://github.com/ArwynFr/dotnet-integration-testing/security/advisories)
 
 **Report malfunctions:**  
-[Please create a new issue on GitHub](https://github.com/ArwynFr/dotnet-integration-testing/issues/new/choose)
+[Create a new issue on GitHub](https://github.com/ArwynFr/dotnet-integration-testing/issues/new/choose)
 
 **Suggest a feature:**  
-[Please create a new issue on GitHub](https://github.com/ArwynFr/dotnet-integration-testing/issues/new/choose)
+[Create a new issue on GitHub](https://github.com/ArwynFr/dotnet-integration-testing/issues/new/choose)
 
 **Offer some code:**  
-Please [fork the repository](https://github.com/ArwynFr/dotnet-integration-testing/fork)
-and [submit a pull-request](https://github.com/ArwynFr/dotnet-integration-testing/compare)
-\
-[Read our definition of done in contributing guidelines](https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/CONTRIBUTING.md)
+[Read our definition of done](https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/CONTRIBUTING.md#definition-of-done)  
+[Fork the repository](https://github.com/ArwynFr/dotnet-integration-testing/fork)  
+[Submit a pull-request](https://github.com/ArwynFr/dotnet-integration-testing/compare)
 
 **Moderate contributions:**  
+[Read our governance policy](https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/GOVERNANCE.md)  
 This project is not currently appointing new moderators.
-\
-[Read our governance policy](https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/GOVERNANCE.md)
