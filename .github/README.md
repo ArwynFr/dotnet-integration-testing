@@ -32,9 +32,11 @@ overwrites the application configuration with values from user secrets
 and environement variables.
 
 ```cs
-public class MyTest : IntegrationTestBase<Program>
+public class MyTest(ITestOutputHelper output) : IntegrationTestBase<Program>(output)
 {
-    public MyTest(ITestOutputHelper output) : base(output) { }
+    // Override a service with fake implementation in the tested app
+    protected override void ConfigureAppServices(IServiceCollection services)
+        => services.AddSingleton<IMyService, FakeService>();
 
     [Fact]
     public async Task OnTest()
@@ -44,19 +46,25 @@ public class MyTest : IntegrationTestBase<Program>
 
         response.Should().HaveValue();
     }
-
-    // Override a service with fake implementation in the tested app
-    protected override void ConfigureAppServices(IServiceCollection services)
-        => services.AddSingleton<IMyService, FakeService>();
 }
 ```
 
 ### EntityFrameworkCore integration
 
+If your application uses EFcore, add the DbContext as a generic parameter
+and provide a configuration method. You can override the DbContext lifetime
+strategy according to your needs:
+
 ```cs
-public class TestBaseDb : IntegrationTestBase<Program, MyDbContext>
+public class TestBaseDb(ITestOutputHelper output) : IntegrationTestBase<Program, MyDbContext>(output)
 {
-    public TestBaseDb(ITestOutputHelper output) : base(output) { }
+    // Create and drop a database for every test execution
+    protected override IDatabaseTestStrategy<Context> DatabaseTestStrategy
+        => IDatabaseTestStrategy<MyDbContext>.DatabasePerTest;
+
+    // Configure EFcore with a random database name par test
+    protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
+        => builder.UseSqlite($"Data Source={Guid.NewGuid()}.sqlite");
 
     [Fact]
     public async Task OnTest()
@@ -72,18 +80,13 @@ public class TestBaseDb : IntegrationTestBase<Program, MyDbContext>
 
         result.Should().Be(value + 1);
     }
-
-    // Create and drop a database for every test execution
-    protected override IDatabaseTestStrategy<Context> DatabaseTestStrategy
-        => IDatabaseTestStrategy<MyDbContext>.DatabasePerTest;
-
-    // Configure EFcore with a random database name
-    protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
-        => builder.UseSqlite($"Data Source={Guid.NewGuid()}.sqlite");
 }
 ```
 
 ### OpenTelemetry integration
+
+You can access OTEL activities produced by your application in your tests.
+This requires you to list which activities to monitor:
 
 ```cs
 public class OpenTelemetryTests(ITestOutputHelper output) : IntegrationTestBase<Program>(output)
@@ -109,7 +112,7 @@ public class OpenTelemetryTests(ITestOutputHelper output) : IntegrationTestBase<
 This project welcomes contributions:
 
 **Request for support:**  
-We do not provide support for this product.
+We do not provide commercial support for this product.
 
 **Disclose vulnerability:**  
 [Read our security policy](https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/SECURITY.md)  

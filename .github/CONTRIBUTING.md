@@ -3,7 +3,7 @@
 This project welcomes contributions:
 
 **Request for support:**  
-We do not provide support for this product.
+We do not provide commercial support for this product.
 
 **Disclose vulnerability:**  
 [Read our security policy](https://github.com/ArwynFr/dotnet-integration-testing/blob/main/.github/SECURITY.md)  
@@ -35,3 +35,5 @@ Merging a pull request requires:
 - markdownlint passes
 - SonarCloud QualityGate passes
 - Documentation updated
+
+We expect 100% test coverage.

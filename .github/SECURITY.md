@@ -2,7 +2,7 @@
 
 ## Supported version
 
-The latest version of the library is the only one suported.
+We do not provide commercial support for this product.
 
 Please update to the latest version before reporting a vulnerability.
 
