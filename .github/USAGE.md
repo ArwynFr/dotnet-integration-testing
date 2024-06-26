@@ -193,6 +193,24 @@ protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
 
 This beahvior WILL drop your database after each test !
 
+### Cleaning the ChangeTracker
+
+When running normally, dotnet web applications will use a different scoped
+instance of the DbContext for each HTTP request. The test library uses a
+singleton instance, otherwise it would not be possible to access the same
+instance from within the test context. As a consequence, any call to the
+DbContext during the arrange phase (including calls to the HttpClient) might
+clogger the Change Tracker with existing entities. In this situation the
+DbContext's ChangeTracker might not be empty when the system under test is
+called. This may in turn cause attaching entities to fail, whereas it would
+have worked in a real request.
+
+The most common pattern for this is when arranging some entities in the
+database then calling an update entity operation.
+
+In such case, the test writer should call `Database.ChangeTracker.Clear()`
+at the end of the arrange phase.
+
 ## OpenTelemetry integration
 
 The library provides specific support for otel. You can achieve this
