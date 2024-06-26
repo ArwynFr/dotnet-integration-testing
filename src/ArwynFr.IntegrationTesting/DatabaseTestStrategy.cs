@@ -42,7 +42,8 @@ where TContext : DbContext
     }
 
     private static Task UpdateDatabase(TContext context)
-        => context.Database.GetMigrations().Any()
+        => context.Database.IsRelational()
+        && context.Database.GetMigrations().Any()
         ? context.Database.MigrateAsync()
         : context.Database.EnsureCreatedAsync();
 }
