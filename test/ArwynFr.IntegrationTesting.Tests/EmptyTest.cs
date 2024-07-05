@@ -7,5 +7,5 @@ namespace ArwynFr.IntegrationTesting.Tests;
 public class EmptyTests(ITestOutputHelper output) : IntegrationTestBase<Program>(output)
 {
     [Fact]
-    public void EmptyTest_ShouldRunWithoutError() => Client.Should().NotBeNull();
+    public void Calling_client_no_exception() => Client.Should().NotBeNull();
 }

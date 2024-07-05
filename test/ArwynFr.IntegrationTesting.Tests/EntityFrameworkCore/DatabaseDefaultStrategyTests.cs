@@ -9,7 +9,7 @@ namespace ArwynFr.IntegrationTesting.Tests.EntityFrameworkCore;
 public class DatabaseDefaultStrategyTests(ITestOutputHelper output) : IntegrationTestBase<Program, DummyDbContext>(output)
 {
     [Fact]
-    public void TestShouldCreateDatabase()
+    public void DefaultStrategy_access_existing_database()
     {
         Database.Database.GetDbConnection().Should().NotBeNull();
     }

@@ -9,7 +9,7 @@ namespace ArwynFr.IntegrationTesting.Tests.EntityFrameworkCore;
 public class DatabaseTransactionStrategyTests(ITestOutputHelper output) : IntegrationTestBase<Program, DummyDbContext>(output)
 {
     [Fact]
-    public void TestShouldExecuteInTransaction()
+    public void TransactionStrategy_runs_in_transaction()
     {
         Database.Database.CurrentTransaction.Should().NotBeNull();
     }

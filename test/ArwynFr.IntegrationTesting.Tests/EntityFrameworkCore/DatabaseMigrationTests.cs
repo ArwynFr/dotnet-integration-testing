@@ -9,7 +9,7 @@ namespace ArwynFr.IntegrationTesting.Tests.EntityFrameworkCore;
 public class DatabaseMigrationTests(ITestOutputHelper output) : IntegrationTestBase<Program, MigrationDbContext>(output)
 {
     [Fact]
-    public async Task TestShouldCreateDatabase()
+    public async Task PerTestStrategy_uses_migrations()
     {
         var migrations = await Database.Database.GetPendingMigrationsAsync();
         migrations.Should().BeEmpty();

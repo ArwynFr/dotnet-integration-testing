@@ -15,7 +15,7 @@ public class LoggingTests(ITestOutputHelper output) : IntegrationTestBase<Progra
 {
 
     [Fact]
-    public async Task EmptyTest_ShouldWriteToXunit()
+    public async Task SUT_writes_logs_to_XUnit()
     {
         await Client.GetAsync("/");
         output.Should().BeOfType<TestOutputHelper>()
@@ -23,7 +23,7 @@ public class LoggingTests(ITestOutputHelper output) : IntegrationTestBase<Progra
     }
 
     [Fact]
-    public async Task ExceptionThrown_ShouldWriteToXunit()
+    public async Task SUT_writes_exceptions_to_XUnit()
     {
         var response = await Client.GetAsync("/error");
         response.Should().HaveServerError();

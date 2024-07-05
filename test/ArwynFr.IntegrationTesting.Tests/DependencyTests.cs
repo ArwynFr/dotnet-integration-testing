@@ -10,13 +10,13 @@ namespace ArwynFr.IntegrationTesting.Tests;
 public class DependencyTests(ITestOutputHelper output) : IntegrationTestBase<Program>(output)
 {
     [Fact]
-    public void InjectedServiceAvailableInTest()
+    public void Injected_service_accessible_in_test()
     {
         Services.GetService<IDummyService>().Should().BeOfType<OverrideDummyService>();
     }
 
     [Fact]
-    public async Task InjectedServiceAvailableInApp()
+    public async Task Injected_service_used_in_SUT()
     {
         var expected = Services.GetRequiredService<IDummyService>().GetHashCode();
         var actual = await Client.GetFromJsonAsync<int>("/service");

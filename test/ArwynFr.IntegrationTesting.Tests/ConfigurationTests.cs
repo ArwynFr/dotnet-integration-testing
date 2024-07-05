@@ -11,5 +11,5 @@ public class ConfigurationTests(ITestOutputHelper output) : IntegrationTestBase<
     // it would require to programatically set environment varaibles or user secrets before class instanciation
 
     [Fact]
-    public void EmptyTest_ShouldAccessConfiguration() => Configuration.AsEnumerable().Count().Should().BeGreaterThanOrEqualTo(0);
+    public void Configuration_not_empty() => Configuration.AsEnumerable().Count().Should().BeGreaterThanOrEqualTo(0);
 }
