@@ -54,7 +54,7 @@ class Build : NukeBuild
             DotNetTasks.DotNet("tool run roslynator analyze");
             DotNetTasks.DotNet("tool run dotnet-outdated --fail-on-updates");
         });
-        
+
     Target Test => _ => _
         .DependsOn(Lint)
         .Executes(() => DotNetTasks.DotNetTest(_ => _
