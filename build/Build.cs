@@ -33,7 +33,7 @@ class Build : NukeBuild
     bool IsPreRelease => !string.IsNullOrEmpty(OctoVersionInfo.PreReleaseTag);
 
     Target Clean => _ => _
-        .Before(Restore, Test)
+        .Before(Restore, Test, Pack)
         .Executes(() =>
         {
             DotNetTasks.DotNetClean();
