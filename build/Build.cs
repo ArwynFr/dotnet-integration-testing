@@ -11,7 +11,7 @@ using System.Linq;
 
 class Build : NukeBuild
 {
-    public static int Main() => Execute<Build>(_ => _.Verify);
+    public static int Main() => Execute<Build>(_ => _.Test);
 
     [Secret, Parameter] readonly string NugetApikey;
     [Secret, Parameter] readonly string SonarToken;
@@ -32,50 +32,8 @@ class Build : NukeBuild
     AbsolutePath NugetGlob => RootDirectory / Constants.Nuget.PackageGlob;
     bool IsPreRelease => !string.IsNullOrEmpty(OctoVersionInfo.PreReleaseTag);
 
-    Target RestoreTools => _ => _
-        .Unlisted()
-        .DependentFor(VerifyOutdated, VerifyRoslyn)
-        .Executes(() => DotNetTasks.DotNetToolRestore());
-
-    Target VerifyFormat => _ => _
-        .Unlisted()
-        .Executes(() => DotNetTasks.DotNet("format --verify-no-changes"));
-
-    Target VerifyRoslyn => _ => _
-        .Unlisted()
-        .Executes(() => DotNetTasks.DotNet("tool run roslynator analyze"));
-
-    Target VerifyOutdated => _ => _
-        .Unlisted()
-        .Executes(() => DotNetTasks.DotNet("tool run dotnet-outdated --fail-on-updates"));
-
-    Target VerifySonarqube => _ => _
-        .Unlisted()
-        .Requires(() => SonarToken)
-        .Executes(() =>
-        {
-            SonarScannerTasks.SonarScannerBegin(_ => _
-                .SetOrganization(SonarOrganization)
-                .SetProjectKey(SonarKey)
-                .SetOpenCoverPaths(TestResultsGlob)
-                .SetServer(Constants.Sonarqube.SonarCloudUrl)
-                .SetToken(SonarToken)
-                .SetQualityGateWait(true));
-
-            DotNetTasks.DotNetTest(_ => _
-                .SetProjectFile(TestProject.Path)
-                .EnableCollectCoverage()
-                .SetDataCollector(Constants.XUnit.CoverletCollectorName)
-                .SetResultsDirectory(TestResultsDirectory)
-                .AddRunSetting(Constants.XUnit.FormatSetting, Constants.XUnit.OpenCoverFormat)
-                .AddRunSetting(Constants.XUnit.IncludeSetting, TestIncludes));
-
-            SonarScannerTasks.SonarScannerEnd(_ => _
-                .SetToken(SonarToken));
-        });
-
     Target Clean => _ => _
-        .Before(RestoreTools)
+        .Before(Restore, Test)
         .Executes(() =>
         {
             DotNetTasks.DotNetClean();
@@ -84,24 +42,41 @@ class Build : NukeBuild
             DotSonar.DeleteDirectory();
         });
 
-    Target Fix => _ => _
-        .Before(Verifying)
-        .DependsOn(RestoreTools)
+    Target Restore => _ => _
+        .Unlisted()
+        .Executes(() => DotNetTasks.DotNetToolRestore());
+
+    Target Lint => _ => _
+        .DependsOn(Restore)
         .Executes(() =>
         {
-            DotNetTasks.DotNet("tool run dotnet-outdated -- --upgrade");
-            DotNetTasks.DotNetFormat();
+            DotNetTasks.DotNet("format --verify-no-changes");
+            DotNetTasks.DotNet("tool run roslynator analyze");
+            DotNetTasks.DotNet("tool run dotnet-outdated --fail-on-updates");
         });
 
-    Target Verifying => _ => _
-        .DependentFor(VerifyFormat, VerifyOutdated, VerifyRoslyn, VerifySonarqube)
-        .Unlisted();
+    Target Test => _ => _
+        .DependsOn(Lint)
+        .Executes(() => DotNetTasks.DotNetTest(_ => _
+            .SetProjectFile(TestProject.Path)
+            .EnableCollectCoverage()
+            .SetDataCollector(Constants.XUnit.CoverletCollectorName)
+            .SetResultsDirectory(TestResultsDirectory)
+            .AddRunSetting(Constants.XUnit.FormatSetting, Constants.XUnit.OpenCoverFormat)
+            .AddRunSetting(Constants.XUnit.IncludeSetting, TestIncludes)));
 
-    Target Verify => _ => _
-        .DependsOn(VerifyFormat, VerifyOutdated, VerifyRoslyn, VerifySonarqube);
+    Target Sonarqube => _ => _
+        .Requires(() => SonarToken)
+        .Executes(() => SonarScannerTasks.SonarScannerBegin(_ => _
+            .SetOrganization(SonarOrganization)
+            .SetProjectKey(SonarKey)
+            .SetOpenCoverPaths(TestResultsGlob)
+            .SetToken(SonarToken)
+            .SetQualityGateWait(true)))
+        .Inherit(Test)
+        .Executes(() => SonarScannerTasks.SonarScannerEnd(_ => _.SetToken(SonarToken)));
 
     Target Pack => _ => _
-        .DependsOn(Verify)
         .Executes(() => DotNetTasks.DotNetPack(_ => _
             .SetProject(Solution.ArwynFr_IntegrationTesting)
             .SetProperty("Version", OctoVersionInfo.FullSemVer)
@@ -110,22 +85,21 @@ class Build : NukeBuild
             .SetOutputDirectory(RootDirectory)));
 
     Target Publish => _ => _
-        .DependsOn(Pack)
-        .Requires(() => NugetApikey)
-        .Executes(() => DotNetTasks.DotNetNuGetPush(_ => _
-            .SetSource(Constants.Nuget.DefaultNugetSource)
-            .SetApiKey(NugetApikey)
-            .SetTargetPath(NugetGlob)));
+        .DependsOn(Pack, Sonarqube)
+        .Requires(() => NugetApikey, () => GhToken)
+        .Executes(() =>
+        {
+            DotNetTasks.DotNetNuGetPush(_ => _
+                .SetSource(Constants.Nuget.DefaultNugetSource)
+                .SetApiKey(NugetApikey)
+                .SetTargetPath(NugetGlob));
 
-    Target Release => _ => _
-        .Unlisted()
-        .TriggeredBy(Publish)
-        .Requires(() => GhToken)
-        .Executes(() => Gh.Invoke(
-            arguments: $"release create {OctoVersionInfo.FullSemVer} --generate-notes",
-            environmentVariables: EnvironmentInfo.Variables
-                .ToDictionary(x => x.Key, x => x.Value)
-                .SetKeyValue("GH_TOKEN", GhToken).AsReadOnly()));
+            Gh.Invoke(
+                arguments: $"release create {OctoVersionInfo.FullSemVer} --generate-notes",
+                environmentVariables: EnvironmentInfo.Variables
+                    .ToDictionary(x => x.Key, x => x.Value)
+                    .SetKeyValue("GH_TOKEN", GhToken).AsReadOnly());
+        });
 
     Target Tags => _ => _
         .Unlisted()

@@ -19,6 +19,6 @@ jobs:
           fetch-depth: 0
 
       - name: Verify using nuke
-        run: JAVA_HOME=$JAVA_HOME_21_X64 ./build.sh Clean Verify
+        run: JAVA_HOME=$JAVA_HOME_21_X64 ./build.sh Clean Sonarqube
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}

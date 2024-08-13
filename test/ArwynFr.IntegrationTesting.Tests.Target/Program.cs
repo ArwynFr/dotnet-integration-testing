@@ -15,6 +15,9 @@ app.MapGet("/otel", async () =>
     await Task.Delay(TimeSpan.FromMilliseconds(10));
 });
 app.MapControllers();
-app.Run();
+await app.RunAsync();
 
-public partial class Program;
+public partial class Program
+{
+    protected Program() { }
+}

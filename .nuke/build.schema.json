@@ -73,18 +73,13 @@
             "type": "string",
             "enum": [
               "Clean",
-              "Fix",
+              "Lint",
               "Pack",
               "Publish",
-              "Release",
-              "RestoreTools",
+              "Restore",
+              "Sonarqube",
               "Tags",
-              "Verify",
-              "VerifyFormat",
-              "Verifying",
-              "VerifyOutdated",
-              "VerifyRoslyn",
-              "VerifySonarqube"
+              "Test"
             ]
           }
         },
@@ -103,18 +98,13 @@
             "type": "string",
             "enum": [
               "Clean",
-              "Fix",
+              "Lint",
               "Pack",
               "Publish",
-              "Release",
-              "RestoreTools",
+              "Restore",
+              "Sonarqube",
               "Tags",
-              "Verify",
-              "VerifyFormat",
-              "Verifying",
-              "VerifyOutdated",
-              "VerifyRoslyn",
-              "VerifySonarqube"
+              "Test"
             ]
           }
         },

@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ArwynFr.IntegrationTesting.Tests.Target;
 
-[ApiController]
+[ApiController, Route("/api/entities")]
 public class DummyController(DummyDbContext dbContext) : ControllerBase
 {
     private readonly DummyDbContext _dbContext = dbContext;
 
-    [HttpGet("/api/entities/{name}")]
+    [HttpGet("{name}")]
     public async Task<Results<Ok<DummyEntity>, NotFound<string>>> ExecuteAsync(string name)
     {
         var value = await _dbContext.Entities.FirstOrDefaultAsync(entity => entity.Name == name);
