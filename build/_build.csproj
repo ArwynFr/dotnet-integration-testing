@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageDownload Include="dotnet-sonarscanner" Version="[6.1.0]" />
+    <PackageDownload Include="dotnet-sonarscanner" Version="[8.0.0]" />
     <PackageDownload Include="Octopus.OctoVersion.Tool" Version="[0.3.325]" />
   </ItemGroup>
 
