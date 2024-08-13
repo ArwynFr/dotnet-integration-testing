@@ -32,44 +32,8 @@ class Build : NukeBuild
     AbsolutePath NugetGlob => RootDirectory / Constants.Nuget.PackageGlob;
     bool IsPreRelease => !string.IsNullOrEmpty(OctoVersionInfo.PreReleaseTag);
 
-    Target Restore => _ => _
-        .Unlisted()
-        .Executes(() => DotNetTasks.DotNetToolRestore());
-
-    Target Test => _ => _
-        .DependsOn(Restore)
-        .Unlisted()
-        .Executes(() =>
-        {
-            DotNetTasks.DotNet("format --verify-no-changes");
-            DotNetTasks.DotNet("tool run roslynator analyze");
-            DotNetTasks.DotNet("tool run dotnet-outdated --fail-on-updates");
-            DotNetTasks.DotNetTest(_ => _
-                .SetProjectFile(TestProject.Path)
-                .EnableCollectCoverage()
-                .SetDataCollector(Constants.XUnit.CoverletCollectorName)
-                .SetResultsDirectory(TestResultsDirectory)
-                .AddRunSetting(Constants.XUnit.FormatSetting, Constants.XUnit.OpenCoverFormat)
-                .AddRunSetting(Constants.XUnit.IncludeSetting, TestIncludes));
-        });
-
-    Target SonarScannerBegin => _ => _
-        .Unlisted()
-        .Before(Test)
-        .Requires(() => SonarToken)
-        .Executes(() => SonarScannerTasks.SonarScannerBegin(_ => _
-            .SetOrganization(SonarOrganization)
-            .SetProjectKey(SonarKey)
-            .SetOpenCoverPaths(TestResultsGlob)
-            .SetToken(SonarToken)
-            .SetQualityGateWait(true)));
-
-    Target Sonarqube => _ => _
-        .DependsOn(SonarScannerBegin, Test)
-        .Executes(() => SonarScannerTasks.SonarScannerEnd(_ => _.SetToken(SonarToken)));
-
     Target Clean => _ => _
-        .Before(Restore)
+        .Before(Restore, Test)
         .Executes(() =>
         {
             DotNetTasks.DotNetClean();
@@ -77,6 +41,40 @@ class Build : NukeBuild
             NugetGlob.GlobFiles().DeleteFiles();
             DotSonar.DeleteDirectory();
         });
+
+    Target Restore => _ => _
+        .Unlisted()
+        .Executes(() => DotNetTasks.DotNetToolRestore());
+
+    Target Lint => _ => _
+        .DependsOn(Restore)
+        .Executes(() =>
+        {
+            DotNetTasks.DotNet("format --verify-no-changes");
+            DotNetTasks.DotNet("tool run roslynator analyze");
+            DotNetTasks.DotNet("tool run dotnet-outdated --fail-on-updates");
+        });
+        
+    Target Test => _ => _
+        .DependsOn(Lint)
+        .Executes(() => DotNetTasks.DotNetTest(_ => _
+            .SetProjectFile(TestProject.Path)
+            .EnableCollectCoverage()
+            .SetDataCollector(Constants.XUnit.CoverletCollectorName)
+            .SetResultsDirectory(TestResultsDirectory)
+            .AddRunSetting(Constants.XUnit.FormatSetting, Constants.XUnit.OpenCoverFormat)
+            .AddRunSetting(Constants.XUnit.IncludeSetting, TestIncludes)));
+
+    Target Sonarqube => _ => _
+        .Requires(() => SonarToken)
+        .Executes(() => SonarScannerTasks.SonarScannerBegin(_ => _
+            .SetOrganization(SonarOrganization)
+            .SetProjectKey(SonarKey)
+            .SetOpenCoverPaths(TestResultsGlob)
+            .SetToken(SonarToken)
+            .SetQualityGateWait(true)))
+        .Inherit(Test)
+        .Executes(() => SonarScannerTasks.SonarScannerEnd(_ => _.SetToken(SonarToken)));
 
     Target Pack => _ => _
         .Executes(() => DotNetTasks.DotNetPack(_ => _
@@ -88,21 +86,20 @@ class Build : NukeBuild
 
     Target Publish => _ => _
         .DependsOn(Pack, Sonarqube)
-        .Requires(() => NugetApikey)
-        .Executes(() => DotNetTasks.DotNetNuGetPush(_ => _
-            .SetSource(Constants.Nuget.DefaultNugetSource)
-            .SetApiKey(NugetApikey)
-            .SetTargetPath(NugetGlob)));
+        .Requires(() => NugetApikey, () => GhToken)
+        .Executes(() =>
+        {
+            DotNetTasks.DotNetNuGetPush(_ => _
+                .SetSource(Constants.Nuget.DefaultNugetSource)
+                .SetApiKey(NugetApikey)
+                .SetTargetPath(NugetGlob));
 
-    Target Release => _ => _
-        .Unlisted()
-        .TriggeredBy(Publish)
-        .Requires(() => GhToken)
-        .Executes(() => Gh.Invoke(
-            arguments: $"release create {OctoVersionInfo.FullSemVer} --generate-notes",
-            environmentVariables: EnvironmentInfo.Variables
-                .ToDictionary(x => x.Key, x => x.Value)
-                .SetKeyValue("GH_TOKEN", GhToken).AsReadOnly()));
+            Gh.Invoke(
+                arguments: $"release create {OctoVersionInfo.FullSemVer} --generate-notes",
+                environmentVariables: EnvironmentInfo.Variables
+                    .ToDictionary(x => x.Key, x => x.Value)
+                    .SetKeyValue("GH_TOKEN", GhToken).AsReadOnly());
+        });
 
     Target Tags => _ => _
         .Unlisted()

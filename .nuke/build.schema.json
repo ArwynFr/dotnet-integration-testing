@@ -73,12 +73,11 @@
             "type": "string",
             "enum": [
               "Clean",
+              "Lint",
               "Pack",
               "Publish",
-              "Release",
               "Restore",
               "Sonarqube",
-              "SonarScannerBegin",
               "Tags",
               "Test"
             ]
@@ -99,12 +98,11 @@
             "type": "string",
             "enum": [
               "Clean",
+              "Lint",
               "Pack",
               "Publish",
-              "Release",
               "Restore",
               "Sonarqube",
-              "SonarScannerBegin",
               "Tags",
               "Test"
             ]
