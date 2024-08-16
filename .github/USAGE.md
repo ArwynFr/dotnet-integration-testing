@@ -58,26 +58,27 @@ fails, you get all the tested application logs in the test output.
 
 ### `ConfigureAppServices`
 
-Override dependency injection services of the tested application.
-
-If your test code and the tested application need to access the same
-instance of a service, you need to inject this instance using a
-Singleton lifetime. Accessing the DI container outside of the client
-call will return an unscoped provider as scopes are created and disposed
-by the framework for each request.
+This method allows to override dependency injection services of the
+tested application. This is useful to inject class doubles. Whenever the
+tested application will try to resolve a service declared here, they will
+get instances of the `FakeService` instead of the original types:
 
 ```cs
-// Override a service with custom implementation in the tested app
+// Override services with custom implementations
 protected override void ConfigureAppServices(IServiceCollection services)
-    => services.AddSingleton<IMyService, FakeService>();
-
-[Fact]
-public async Task OnTest()
 {
-    // Access the injected service from the test code
-    var service = Services.GetRequiredService<IMyService>();
-    service.SetValue(expected);
+    services.AddScoped<IMyScopedService, FakeService>();
+    services.AddSingleton<IMySingletonService, FakeService>();
+    services.AddTransient<IMyTransientService, FakeService>();
 }
+```
+
+You can also overide the lifetime of the service:
+
+```cs
+// Override a scoped service with a singleton object
+protected override void ConfigureAppServices(IServiceCollection services)
+=> services.AddSingleton<IMyScopedService>(new FakeInstance());
 ```
 
 ## Accessing the tested application
@@ -104,14 +105,47 @@ currently available to the tested application.
 
 ### `Services`
 
-This property grants you access to the DI service provider of the tested
-application.
+This property grants you an access to the DI service container of the
+tested application:
 
-If your test code and the tested application need to access the same
-instance of a service, you need to inject this instance using a
-Singleton lifetime. Accessing the DI container outside of the client
-call will return an unscoped provider as scopes are created and disposed
-by the framework for each request.
+```cs
+[Fact] public void Test()
+{
+    var service = Services.GetService<IMyService>();
+}
+```
+
+Scopes are handled by the framework at the request level, so the test
+and the tested application cannot share a common scope. This means that
+if you resolve a scoped service from the test, you will get a different
+instance than the one used in the tested application.
+
+```cs
+[Fact] public void Test()
+{
+    // these two instances are not the same !
+    var expected = Services.GetService<IMyScopedService>().GetHashCode();
+    var actual = await Client.GetScopedServiceHashCode();
+    actual.Should().Be(expected); // FAIL
+}
+```
+
+If you need the test class and the tested application to share object
+instances, you need to override their lifetime to singleton. Beware
+of impacts due to the usage of a singleton object accross multiple
+request.
+
+```cs
+// Override a scoped service with a singleton instance
+protected override void ConfigureAppServices(IServiceCollection services)
+    => services.AddSingleton<IMyScopedService, FakeService>();
+
+[Fact] public void Test()
+{
+    var expected = Services.GetService<IMyScopedService>().GetHashCode();
+    var actual = await Client.GetScopedServiceHashCode(); // SUCCESS
+}
+```
 
 ## Extending the behavior of the test class
 
@@ -138,8 +172,8 @@ that only uses the entrypoint.
 You will need to override the abstract `ConfigureDbContext` method to
 tell the dependency injection library how to configure your context. A
 context instance will be generated per test and injected in your target
-app as a singleton. You can access the same context instance in your
-test through the `Database` property.
+app. You can access the same context instance in your test through the
+`Database` property.
 
 ```cs
 protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
@@ -193,23 +227,37 @@ protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
 
 This beahvior WILL drop your database after each test !
 
-### Cleaning the ChangeTracker
+### Database context lifetime
 
-When running normally, dotnet web applications will use a different scoped
-instance of the DbContext for each HTTP request. The test library uses a
-singleton instance, otherwise it would not be possible to access the same
-instance from within the test context. As a consequence, any call to the
+By default, the library injects the DbContext as scoped service. If you
+run the test using a transaction isolation level, the test code needs to
+access the context instance to start and rollback the transactions.
+In that case you need to tell the runtime to inject the DbContext as a
+singleton service trough the `DatabaseLifetime` property:
+
+```cs
+protected override IDatabaseTestStrategy<Context> DatabaseTestStrategy
+    => IDatabaseTestStrategy<Context>.Transaction;
+
+protected override ServiceLifetime DatabaseLifetime
+    => ServiceLifetime.Singleton;
+
+protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
+    => builder.UseSqlite($"Data Source={Guid.NewGuid()}.sqlite");
+```
+
+When running the tests with a singleton DbContext, any call to the
 DbContext during the arrange phase (including calls to the HttpClient) might
 clogger the Change Tracker with existing entities. In this situation the
 DbContext's ChangeTracker might not be empty when the system under test is
 called. This may in turn cause attaching entities to fail, whereas it would
-have worked in a real request.
+have worked in a real request. In such case, the test writer should call
+`Database.ChangeTracker.Clear()` at the end of the arrange phase.
 
 The most common pattern for this is when arranging some entities in the
 database then calling an update entity operation.
 
-In such case, the test writer should call `Database.ChangeTracker.Clear()`
-at the end of the arrange phase.
+This operation is not needed if the DatabaseLifetime is set to scoped.
 
 ## OpenTelemetry integration
 

@@ -16,12 +16,14 @@ where TProgram : class
 {
     private readonly XUnitLoggerProvider provider;
 
+    private readonly WebApplicationFactory<TProgram> factory;
+
     protected IntegrationTestBase(ITestOutputHelper output)
     {
         provider = new XUnitLoggerProvider(output);
-        var factory = new WebApplicationFactory<TProgram>().WithWebHostBuilder(ConfigureWebHostBuilder);
+        factory = new WebApplicationFactory<TProgram>().WithWebHostBuilder(ConfigureWebHostBuilder);
         Client = factory.CreateClient();
-        Services = factory.Services;
+        Services = factory.Services.CreateScope().ServiceProvider;
         Configuration = factory.Services.GetRequiredService<IConfiguration>();
     }
 
@@ -38,6 +40,7 @@ where TProgram : class
     public virtual Task DisposeAsync()
     {
         provider.Dispose();
+        factory.Dispose();
         return Task.CompletedTask;
     }
 

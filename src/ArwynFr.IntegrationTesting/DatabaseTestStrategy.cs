@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ArwynFr.IntegrationTesting;
 
@@ -46,4 +47,7 @@ where TContext : DbContext
         && context.Database.GetMigrations().Any()
         ? context.Database.MigrateAsync()
         : context.Database.EnsureCreatedAsync();
+
+    public bool IsLifetimeSupported(ServiceLifetime lifetime)
+    => transaction ? lifetime == ServiceLifetime.Singleton : true;
 }

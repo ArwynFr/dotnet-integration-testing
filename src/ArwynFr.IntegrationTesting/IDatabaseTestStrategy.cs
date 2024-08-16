@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ArwynFr.IntegrationTesting;
 
@@ -21,6 +22,7 @@ where TContext : DbContext
     /// </summary>
     public static IDatabaseTestStrategy<TContext> Transaction => new DatabaseTestStrategy<TContext>().WithTransaction();
 
+    bool IsLifetimeSupported(ServiceLifetime lifetime);
     Task DisposeAsync(TContext database);
     Task InitializeAsync(TContext database);
 

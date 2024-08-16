@@ -1,6 +1,7 @@
 ﻿using ArwynFr.IntegrationTesting.Tests.Target;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -22,6 +23,8 @@ public class DatabaseTransactionStrategyTests(ITestOutputHelper output) : Integr
 
     protected override IDatabaseTestStrategy<DummyDbContext> DatabaseTestStrategy
         => IDatabaseTestStrategy<DummyDbContext>.Transaction;
+
+    protected override ServiceLifetime DatabaseLifetime => ServiceLifetime.Singleton;
 
     protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
         => builder.UseSqlite($@"Data Source={Guid.NewGuid()}.sqlite");
