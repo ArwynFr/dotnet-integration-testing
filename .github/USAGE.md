@@ -193,6 +193,9 @@ The library comes with 3 standard behaviors:
 
 By default the library simply instantates the context and disposes the
 instance after the test execution.
+The DbContext instance of this strategy is scoped. This means that in
+the test code, the `Database` property is not the same instance as the
+one in the tested application.
 
 #### `IDatabaseTestStrategy<TContext>.Transaction`
 
@@ -200,6 +203,9 @@ This behavior will execute each test in a separate transaction. This can
 be used to prevent write operations to change the contents of the
 database. Obviously requires a database engine that supports
 transactions.
+The DbContext instance of this strategy is singleton. This means that in
+the test code, the `Database` property is the same instance as the one
+in the tested application.
 
 #### `IDatabaseTestStrategy<TContext>.DatabasePerTest`
 
@@ -210,8 +216,11 @@ APIs](https://learn.microsoft.com/en-us/ef/core/managing-schemas/ensure-created)
 to understand how this might affect your test results). This allows test
 parallelization when transaction isolation is not sufficient or
 unavailable.
+The DbContext instance of this strategy is scoped. This means that in
+the test code, the `Database` property is not the same instance as the
+one in the tested application.
 
-You must combine this behavior with a random name
+You MUST combine this behavior with a random name
 interpolation in the connection string to run each test on it’s own
 database in parallel. Otherwise the tests will try to access the same
 database concurrently and will fail to drop it while other tests are
@@ -225,39 +234,22 @@ protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
     => builder.UseSqlite($"Data Source={Guid.NewGuid()}.sqlite");
 ```
 
-This beahvior WILL drop your database after each test !
+CAUTION: This beahvior WILL drop your database after each test !
 
-### Database context lifetime
+### Cleaning the change tracker
 
-By default, the library injects the DbContext as scoped service. If you
-run the test using a transaction isolation level, the test code needs to
-access the context instance to start and rollback the transactions.
-In that case you need to tell the runtime to inject the DbContext as a
-singleton service trough the `DatabaseLifetime` property:
-
-```cs
-protected override IDatabaseTestStrategy<Context> DatabaseTestStrategy
-    => IDatabaseTestStrategy<Context>.Transaction;
-
-protected override ServiceLifetime DatabaseLifetime
-    => ServiceLifetime.Singleton;
-
-protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
-    => builder.UseSqlite($"Data Source={Guid.NewGuid()}.sqlite");
-```
+The database test strategy determines the lifetime of the DbContext
+instance in the DI container.
 
 When running the tests with a singleton DbContext, any call to the
-DbContext during the arrange phase (including calls to the HttpClient) might
-clogger the Change Tracker with existing entities. In this situation the
-DbContext's ChangeTracker might not be empty when the system under test is
-called. This may in turn cause attaching entities to fail, whereas it would
-have worked in a real request. In such case, the test writer should call
-`Database.ChangeTracker.Clear()` at the end of the arrange phase.
+DbContext during the arrange phase (including calls via the HttpClient)
+might clogger the Change Tracker with existing entities. In this situation
+the DbContext's ChangeTracker might not be empty when the system under test
+is called. This may in turn cause attaching entities to fail, whereas it
+would have worked in a real request. In such case, the test writer should
+call `Database.ChangeTracker.Clear()` at the end of the arrange phase.
 
-The most common pattern for this is when arranging some entities in the
-database then calling an update entity operation.
-
-This operation is not needed if the DatabaseLifetime is set to scoped.
+Cleaning the change tracker is not needed for scoped or transient.
 
 ## OpenTelemetry integration
 

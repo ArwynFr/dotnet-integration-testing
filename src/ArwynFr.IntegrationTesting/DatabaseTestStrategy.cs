@@ -9,6 +9,8 @@ where TContext : DbContext
     private bool transaction = false;
     private bool transient = false;
 
+    public ServiceLifetime Lifetime => transaction ? ServiceLifetime.Singleton : ServiceLifetime.Scoped;
+
     public async Task DisposeAsync(TContext database)
     {
         if (transient)
@@ -47,7 +49,4 @@ where TContext : DbContext
         && context.Database.GetMigrations().Any()
         ? context.Database.MigrateAsync()
         : context.Database.EnsureCreatedAsync();
-
-    public bool IsLifetimeSupported(ServiceLifetime lifetime)
-    => transaction ? lifetime == ServiceLifetime.Singleton : true;
 }

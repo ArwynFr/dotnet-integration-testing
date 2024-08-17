@@ -22,7 +22,7 @@ where TContext : DbContext
     /// </summary>
     public static IDatabaseTestStrategy<TContext> Transaction => new DatabaseTestStrategy<TContext>().WithTransaction();
 
-    bool IsLifetimeSupported(ServiceLifetime lifetime);
+    ServiceLifetime Lifetime { get; }
     Task DisposeAsync(TContext database);
     Task InitializeAsync(TContext database);
 
