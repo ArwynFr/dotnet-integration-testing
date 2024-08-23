@@ -17,6 +17,6 @@ public class DatabasePerTestStrategyTests(ITestOutputHelper output) : Integratio
     protected override IDatabaseTestStrategy<DummyDbContext> DatabaseTestStrategy
         => IDatabaseTestStrategy<DummyDbContext>.DatabasePerTest;
 
-    protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
+    protected override void ConfigureDbContext(IServiceProvider services, DbContextOptionsBuilder builder)
         => builder.UseSqlite($@"Data Source={Guid.NewGuid()}.sqlite");
 }

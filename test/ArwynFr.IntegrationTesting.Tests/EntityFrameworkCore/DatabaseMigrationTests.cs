@@ -18,6 +18,6 @@ public class DatabaseMigrationTests(ITestOutputHelper output) : IntegrationTestB
     protected override IDatabaseTestStrategy<MigrationDbContext> DatabaseTestStrategy
         => IDatabaseTestStrategy<MigrationDbContext>.DatabasePerTest;
 
-    protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
+    protected override void ConfigureDbContext(IServiceProvider services, DbContextOptionsBuilder builder)
         => builder.UseSqlite($@"Data Source={Guid.NewGuid()}.sqlite");
 }
