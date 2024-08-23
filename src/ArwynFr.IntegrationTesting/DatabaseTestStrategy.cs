@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace ArwynFr.IntegrationTesting;
 
@@ -9,7 +10,10 @@ where TContext : DbContext
     private bool transaction = false;
     private bool transient = false;
 
-    public ServiceLifetime Lifetime => transaction ? ServiceLifetime.Singleton : ServiceLifetime.Scoped;
+    private ServiceLifetime Lifetime
+    => transaction
+    ? ServiceLifetime.Singleton
+    : ServiceLifetime.Scoped;
 
     public async Task DisposeAsync(TContext database)
     {
@@ -30,6 +34,14 @@ where TContext : DbContext
         {
             await database.Database.BeginTransactionAsync();
         }
+    }
+
+    public void RegisterDbContext(IServiceCollection services, Action<IServiceProvider, DbContextOptionsBuilder> configureDbContext)
+    {
+        services.RemoveAll<TContext>();
+        services.RemoveAll<DbContextOptions<TContext>>();
+        services.AddDbContext<TContext>(configureDbContext, Lifetime);
+        services.Add(new ServiceDescriptor(typeof(TContext), typeof(TContext), Lifetime));
     }
 
     public DatabaseTestStrategy<TContext> WithPerTest()

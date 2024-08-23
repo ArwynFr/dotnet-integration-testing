@@ -17,6 +17,6 @@ public class DatabaseNonRelationalTests(ITestOutputHelper output) : IntegrationT
     protected override IDatabaseTestStrategy<DummyDbContext> DatabaseTestStrategy
         => IDatabaseTestStrategy<DummyDbContext>.DatabasePerTest;
 
-    protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
+    protected override void ConfigureDbContext(IServiceProvider services, DbContextOptionsBuilder builder)
         => builder.UseInMemoryDatabase(Guid.NewGuid().ToString());
 }

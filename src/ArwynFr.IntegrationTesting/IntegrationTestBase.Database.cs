@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Xunit.Abstractions;
 
 namespace ArwynFr.IntegrationTesting;
@@ -28,12 +27,9 @@ where TContext : DbContext
     protected override void ConfigureAppServices(IServiceCollection services)
     {
         base.ConfigureAppServices(services);
-        services.RemoveAll<TContext>();
-        services.RemoveAll<DbContextOptions<TContext>>();
-        services.AddDbContext<TContext>(ConfigureDbContext, DatabaseTestStrategy.Lifetime);
-        services.Add(new ServiceDescriptor(typeof(TContext), typeof(TContext), DatabaseTestStrategy.Lifetime));
+        DatabaseTestStrategy.RegisterDbContext(services, ConfigureDbContext);
     }
 
-    protected abstract void ConfigureDbContext(DbContextOptionsBuilder builder);
+    protected abstract void ConfigureDbContext(IServiceProvider services, DbContextOptionsBuilder builder);
 
 }

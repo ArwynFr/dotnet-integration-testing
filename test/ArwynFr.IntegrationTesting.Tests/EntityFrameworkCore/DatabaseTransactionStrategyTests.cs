@@ -23,6 +23,6 @@ public class DatabaseTransactionStrategyTests(ITestOutputHelper output) : Integr
     protected override IDatabaseTestStrategy<DummyDbContext> DatabaseTestStrategy
         => IDatabaseTestStrategy<DummyDbContext>.Transaction;
 
-    protected override void ConfigureDbContext(DbContextOptionsBuilder builder)
+    protected override void ConfigureDbContext(IServiceProvider services, DbContextOptionsBuilder builder)
         => builder.UseSqlite($@"Data Source={Guid.NewGuid()}.sqlite");
 }
